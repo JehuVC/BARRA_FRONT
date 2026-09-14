@@ -3,12 +3,12 @@
     x:Class="BarraApp.Mobile.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:BarraApp.Mobile"
+    xmlns:dashboard="clr-namespace:BarraApp.Mobile.Views.Dashboard"
     Title="BarraApp.Mobile">
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Title="Inicio"
+        ContentTemplate="{DataTemplate dashboard:DashboardPage}"
+        Route="DashboardPage" />
 
 </Shell>

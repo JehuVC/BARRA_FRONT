@@ -57,8 +57,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.12" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Copias de Core/DTO del backend (mismo contrato HTTP). Se sincronizan
+		     a mano cuando cambie algo del lado del API, ver README/nota de la
+		     conversacion sobre por que no son un ProjectReference cruzado entre
+		     repos. -->
+		<ProjectReference Include="..\Core\Core.csproj" />
+		<ProjectReference Include="..\DTO\DTO.csproj" />
 	</ItemGroup>
 
 </Project>

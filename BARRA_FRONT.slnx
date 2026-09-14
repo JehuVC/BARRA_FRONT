@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="BarraApp.Mobile/BarraApp.Mobile.csproj" />
+  <Project Path="Core/Core.csproj" />
+  <Project Path="DTO/DTO.csproj" />
 </Solution>
