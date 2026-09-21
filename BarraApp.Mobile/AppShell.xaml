@@ -14,9 +14,7 @@
         ContentTemplate="{DataTemplate usuario:LoginPage}"
         Route="LoginPage" />
 
-    <ShellContentc:\users\jvale\desktop\jehu\u\moviles\proyecto front\barra_front\barraapp.mobile\appshell.xaml.cs
-c:\users\jvale\desktop\jehu\u\moviles\proyecto front\barra_front\barraapp.mobile\appshell.xaml
-
+    <ShellContent
         Title="Inicio"
         ContentTemplate="{DataTemplate dashboard:DashboardPage}"
         Route="DashboardPage" />
