@@ -2,9 +2,7 @@ using System.Net.Http.Json;
 
 namespace BarraApp.Mobile.Services.Api;
 
-// Base de todo servicio que le pega a la API (SesionService, GuildService, ...).
-// Centraliza el manejo de errores de transporte para que cada servicio de
-// dominio solo tenga que declarar la ruta y los tipos de DTO/Res.
+
 public abstract class ApiServiceBase(HttpClient http)
 {
     protected async Task<TRes> PostAsync<TReq, TRes>(string ruta, TReq body)

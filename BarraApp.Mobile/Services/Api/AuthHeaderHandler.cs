@@ -2,9 +2,7 @@ using System.Net.Http.Headers;
 
 namespace BarraApp.Mobile.Services.Api;
 
-// Le agrega el header Authorization: Bearer <token> a cada request saliente,
-// si hay una sesion guardada. Asi ningun servicio (SesionService, GuildService,
-// etc.) tiene que acordarse de hacerlo a mano.
+
 public class AuthHeaderHandler(IAuthTokenStore tokenStore) : DelegatingHandler
 {
     protected override async Task<HttpResponseMessage> SendAsync(

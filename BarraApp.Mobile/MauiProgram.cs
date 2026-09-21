@@ -29,8 +29,6 @@ public static class MauiProgram
 		return builder.Build();
 	}
 
-	// Cliente HTTP tipado por servicio de dominio (FE-S6-02): cada servicio
-	// nuevo que consuma la API se agrega aqui igual que ISesionService/SesionService.
 	static void RegistrarApi(IServiceCollection services)
 	{
 		services.AddSingleton<IAuthTokenStore, AuthTokenStore>();
@@ -43,9 +41,7 @@ public static class MauiProgram
 		.AddHttpMessageHandler<AuthHeaderHandler>();
 	}
 
-	// Cada pantalla nueva (Views/<Dominio>/XxxPage + ViewModels/<Dominio>/XxxViewModel)
-	// se registra aqui como Transient para que Shell pueda inyectar el ViewModel
-	// por constructor al navegar a su ruta.
+
 	static void RegistrarPantallas(IServiceCollection services)
 	{
 		services.AddTransient<DashboardViewModel>();
