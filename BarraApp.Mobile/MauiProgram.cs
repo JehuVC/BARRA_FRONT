@@ -1,7 +1,9 @@
 ﻿using BarraApp.Mobile.Services.Api;
 using BarraApp.Mobile.Services.Sesion;
 using BarraApp.Mobile.ViewModels.Dashboard;
+using BarraApp.Mobile.ViewModels.Usuario;
 using BarraApp.Mobile.Views.Dashboard;
+using BarraApp.Mobile.Views.Usuario;
 using Microsoft.Extensions.Logging;
 
 namespace BarraApp.Mobile;
@@ -44,6 +46,9 @@ public static class MauiProgram
 
 	static void RegistrarPantallas(IServiceCollection services)
 	{
+		services.AddTransient<LoginViewModel>();
+		services.AddTransient<LoginPage>();
+
 		services.AddTransient<DashboardViewModel>();
 		services.AddTransient<DashboardPage>();
 	}

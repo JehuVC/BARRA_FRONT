@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:BarraApp.Mobile.ViewModels.Usuario"
+             x:Class="BarraApp.Mobile.Views.Usuario.LoginPage"
+             x:DataType="viewmodels:LoginViewModel"
+             Shell.NavBarIsVisible="False"
+             Title="Ingresar">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30,60,30,0" Spacing="20" VerticalOptions="Center">
+
+            <Label Text="BarraApp"
+                   Style="{StaticResource Headline}"
+                   HorizontalOptions="Center" />
+
+            <Label Text="Inicia sesion para continuar"
+                   Style="{StaticResource SubHeadline}"
+                   HorizontalOptions="Center" />
+
+            <Entry x:Name="EntryCorreo"
+                   Placeholder="Correo electronico"
+                   Keyboard="Email"
+                   Text="{Binding Correo}"
+                   IsEnabled="{Binding PuedeEnviar}" />
+
+            <Entry x:Name="EntryClave"
+                   Placeholder="Contrasena"
+                   IsPassword="True"
+                   Text="{Binding Clave}"
+                   IsEnabled="{Binding PuedeEnviar}" />
+
+            <Label Text="{Binding MensajeError}"
+                   TextColor="Red"
+                   IsVisible="{Binding HasError}"
+                   HorizontalOptions="Center" />
+
+            <Button Text="Ingresar"
+                    Command="{Binding IniciarSesionCommand}"
+                    IsEnabled="{Binding PuedeEnviar}" />
+
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}"
+                                IsVisible="{Binding EstaOcupado}"
+                                HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

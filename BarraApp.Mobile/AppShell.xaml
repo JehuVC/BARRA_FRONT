@@ -3,10 +3,20 @@
     x:Class="BarraApp.Mobile.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:usuario="clr-namespace:BarraApp.Mobile.Views.Usuario"
     xmlns:dashboard="clr-namespace:BarraApp.Mobile.Views.Dashboard"
-    Title="BarraApp.Mobile">
+    Title="BarraApp.Mobile"
+    FlyoutBehavior="Disabled"
+    Shell.TabBarIsVisible="False">
 
     <ShellContent
+        Title="Ingresar"
+        ContentTemplate="{DataTemplate usuario:LoginPage}"
+        Route="LoginPage" />
+
+    <ShellContentc:\users\jvale\desktop\jehu\u\moviles\proyecto front\barra_front\barraapp.mobile\appshell.xaml.cs
+c:\users\jvale\desktop\jehu\u\moviles\proyecto front\barra_front\barraapp.mobile\appshell.xaml
+
         Title="Inicio"
         ContentTemplate="{DataTemplate dashboard:DashboardPage}"
         Route="DashboardPage" />
