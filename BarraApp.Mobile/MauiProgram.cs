@@ -28,7 +28,19 @@ public static class MauiProgram
 		RegistrarApi(builder.Services);
 		RegistrarPantallas(builder.Services);
 
-		return builder.Build();
+        // Quitar el borde y fondo nativo de los Entry
+        Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("NoBorder", (handler, view) =>
+        {
+#if ANDROID
+            handler.PlatformView.Background = null;
+            handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
+#elif WINDOWS
+    handler.PlatformView.BorderThickness = new Microsoft.UI.Xaml.Thickness(0);
+    handler.PlatformView.FocusVisualMargin = new Microsoft.UI.Xaml.Thickness(0);
+#endif
+        });
+
+        return builder.Build();
 	}
 
 	static void RegistrarApi(IServiceCollection services)
@@ -51,5 +63,8 @@ public static class MauiProgram
 
 		services.AddTransient<DashboardViewModel>();
 		services.AddTransient<DashboardPage>();
-	}
+
+        services.AddTransient<RegistroViewModel>();
+        services.AddTransient<RegistroPage>();
+    }
 }

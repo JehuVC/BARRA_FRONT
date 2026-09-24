@@ -72,4 +72,19 @@
 		<ProjectReference Include="..\DTO\DTO.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Views\Usuario\RegistroPage.xaml.cs">
+	    <DependentUpon>RegistroPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Controls\FloatingEntry.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Usuario\RegistroPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>

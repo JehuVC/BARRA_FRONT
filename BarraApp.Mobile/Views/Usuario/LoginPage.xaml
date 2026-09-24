@@ -2,48 +2,85 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:BarraApp.Mobile.ViewModels.Usuario"
+             xmlns:controls="clr-namespace:BarraApp.Mobile.Controls"
              x:Class="BarraApp.Mobile.Views.Usuario.LoginPage"
              x:DataType="viewmodels:LoginViewModel"
-             Shell.NavBarIsVisible="False"
-             Title="Ingresar">
+             Shell.NavBarIsVisible="False">
 
     <ScrollView>
-        <VerticalStackLayout Padding="30,60,30,0" Spacing="20" VerticalOptions="Center">
+        <VerticalStackLayout Padding="30,80,30,30" Spacing="25" VerticalOptions="Center">
 
-            <Label Text="BarraApp"
-                   Style="{StaticResource Headline}"
-                   HorizontalOptions="Center" />
+            <!-- Logo / Título -->
+            <Label HorizontalOptions="Center" Margin="0,0,0,20">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Barra" FontSize="36" FontAttributes="Bold" TextColor="{StaticResource AppText}"/>
+                        <Span Text="App" FontSize="36" FontAttributes="Bold" TextColor="{StaticResource AppYellow}"/>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
 
-            <Label Text="Inicia sesion para continuar"
-                   Style="{StaticResource SubHeadline}"
-                   HorizontalOptions="Center" />
+            <Label Text="Inicia sesión para continuar" 
+                   TextColor="{StaticResource AppSubtext}" 
+                   FontSize="16" 
+                   HorizontalOptions="Center" 
+                   Margin="0,-10,0,20"/>
 
-            <Entry x:Name="EntryCorreo"
-                   Placeholder="Correo electronico"
-                   Keyboard="Email"
-                   Text="{Binding Correo}"
-                   IsEnabled="{Binding PuedeEnviar}" />
+            <!-- Input Flotante para Correo -->
+            <controls:FloatingEntry Placeholder="Correo electrónico"
+                                    Keyboard="Email"
+                                    Text="{Binding Correo}"
+                                    IsEnabled="{Binding PuedeEnviar}" />
 
-            <Entry x:Name="EntryClave"
-                   Placeholder="Contrasena"
-                   IsPassword="True"
-                   Text="{Binding Clave}"
-                   IsEnabled="{Binding PuedeEnviar}" />
+            <!-- Input Flotante para Contraseña -->
+            <controls:FloatingEntry Placeholder="Contraseña"
+                                    IsPassword="True"
+                                    Text="{Binding Clave}"
+                                    IsEnabled="{Binding PuedeEnviar}" />
 
-            <Label Text="{Binding MensajeError}"
-                   TextColor="Red"
-                   IsVisible="{Binding HasError}"
-                   HorizontalOptions="Center" />
+            <!-- Mensaje de Error -->
+            <Label Text="{Binding MensajeError}" 
+                   TextColor="#EF4444" 
+                   IsVisible="{Binding HasError}" 
+                   HorizontalOptions="Center" 
+                   FontSize="14"/>
 
-            <Button Text="Ingresar"
-                    Command="{Binding IniciarSesionCommand}"
-                    IsEnabled="{Binding PuedeEnviar}" />
+            <!-- Botón Login -->
+            <Button Text="Ingresar" 
+                    Command="{Binding IniciarSesionCommand}" 
+                    IsEnabled="{Binding PuedeEnviar}" 
+                    Margin="0,10,0,0">
+                <Button.Shadow>
+                    <Shadow Brush="{StaticResource AppYellow}" Offset="0,10" Radius="30" Opacity="0.2"/>
+                </Button.Shadow>
+            </Button>
 
-            <ActivityIndicator IsRunning="{Binding EstaOcupado}"
-                                IsVisible="{Binding EstaOcupado}"
-                                HorizontalOptions="Center" />
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}" 
+                               IsVisible="{Binding EstaOcupado}" 
+                               Color="{StaticResource AppYellow}" 
+                               HorizontalOptions="Center" />
+
+            <!-- Enlaces adicionales -->
+            <VerticalStackLayout Spacing="15" Margin="0,20,0,0">
+                <Label Text="¿Olvidaste tu contraseña?" 
+                       TextColor="{StaticResource AppSubtext}" 
+                       HorizontalOptions="Center" 
+                       TextDecorations="Underline">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding IrARecuperarCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
+                    <Label Text="¿No tienes cuenta?" TextColor="{StaticResource AppSubtext}"/>
+                    <Label Text="Regístrate" TextColor="{StaticResource AppYellow}" FontAttributes="Bold">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding IrARegistroCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
 
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>

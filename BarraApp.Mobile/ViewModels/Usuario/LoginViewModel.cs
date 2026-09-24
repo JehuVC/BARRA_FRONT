@@ -5,6 +5,7 @@ using BarraApp.Mobile.Services.Sesion;
 using BarraApp.Mobile.Views.Dashboard;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using BarraApp.Mobile.Views.Usuario;
 
 namespace BarraApp.Mobile.ViewModels.Usuario;
 
@@ -76,4 +77,11 @@ public partial class LoginViewModel(ISesionService sesionService, IAuthTokenStor
         "usuarioInactivo" => "Esta cuenta esta inactiva. Contacta a soporte.",
         _ => "No se pudo iniciar sesion. Intenta de nuevo."
     };
+
+    [RelayCommand]
+    private async Task IrARegistroAsync()
+    {
+        await Shell.Current.GoToAsync(nameof(RegistroPage));
+    }
+
 }

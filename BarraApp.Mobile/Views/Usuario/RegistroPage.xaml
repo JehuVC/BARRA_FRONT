@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:BarraApp.Mobile.ViewModels.Usuario"
+             xmlns:controls="clr-namespace:BarraApp.Mobile.Controls"
+             x:Class="BarraApp.Mobile.Views.Usuario.RegistroPage"
+             x:DataType="viewmodels:RegistroViewModel"
+             Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30,50,30,30" Spacing="20">
+
+            <Label Text="Crear Cuenta"
+                   FontSize="28" FontAttributes="Bold" TextColor="{StaticResource AppText}"
+                   HorizontalOptions="Center" Margin="0,0,0,10"/>
+
+            <!-- Nombre -->
+            <controls:FloatingEntry Placeholder="Nombre completo"
+                                    Text="{Binding Nombre}"
+                                    IsEnabled="{Binding PuedeEnviar}" />
+
+            <!-- Correo con Botón de Info -->
+            <controls:FloatingEntry Placeholder="Correo electrónico"
+                                    Keyboard="Email"
+                                    Text="{Binding Correo}"
+                                    BorderColor="{Binding CorreoBorder}"
+                                    HasInfo="True"
+                                    InfoCommand="{Binding MostrarInfoCorreoCommand}"
+                                    IsEnabled="{Binding PuedeEnviar}" />
+
+            <!-- Contraseña con Botón de Info -->
+            <controls:FloatingEntry Placeholder="Contraseña"
+                                    IsPassword="True"
+                                    Text="{Binding Clave}"
+                                    BorderColor="{Binding ClaveBorder}"
+                                    HasInfo="True"
+                                    InfoCommand="{Binding MostrarInfoClaveCommand}"
+                                    IsEnabled="{Binding PuedeEnviar}" />
+
+            <!-- Confirmar Contraseña -->
+            <controls:FloatingEntry Placeholder="Confirmar contraseña"
+                                    IsPassword="True"
+                                    Text="{Binding ConfirmarClave}"
+                                    BorderColor="{Binding ConfirmarClaveBorder}"
+                                    IsEnabled="{Binding PuedeEnviar}" />
+
+            <!-- Zona -->
+            <controls:FloatingEntry Placeholder="Zona (Ej: San José, Grecia...)"
+                                    Text="{Binding Zona}"
+                                    IsEnabled="{Binding PuedeEnviar}" />
+
+            <!-- Mensaje de Error Personalizado -->
+            <Label Text="{Binding MensajeError}"
+                   TextColor="#EF4444"
+                   IsVisible="{Binding HasError}"
+                   HorizontalOptions="Center" 
+                   FontSize="13"
+                   LineBreakMode="WordWrap"
+                   HorizontalTextAlignment="Center"/>
+
+            <!-- Botón de Registro -->
+            <Button Text="Registrarse"
+                    Command="{Binding RegistrarCommand}"
+                    IsEnabled="{Binding PuedeEnviar}"
+                    Margin="0,10,0,0">
+                <Button.Shadow>
+                    <Shadow Brush="{StaticResource AppYellow}" Offset="0,10" Radius="30" Opacity="0.2"/>
+                </Button.Shadow>
+            </Button>
+
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}"
+                               IsVisible="{Binding EstaOcupado}"
+                               Color="{StaticResource AppYellow}"
+                               HorizontalOptions="Center" />
+
+            <!-- Enlace para volver al login -->
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="5" Margin="0,10,0,0">
+                <Label Text="¿Ya tienes cuenta?" TextColor="{StaticResource AppSubtext}"/>
+                <Label Text="Inicia sesión" TextColor="{StaticResource AppYellow}" FontAttributes="Bold">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding VolverCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

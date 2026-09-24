@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BarraApp.Mobile.Controls.FloatingEntry"
+             x:Name="thisControl">
+
+    <!-- Aumentamos HeightRequest a 68 -->
+    <Border Stroke="{Binding BorderColor, Source={x:Reference thisControl}, FallbackValue='#374151'}"
+            StrokeShape="RoundRectangle 16"
+            BackgroundColor="{StaticResource AppCard}"
+            HeightRequest="68">
+
+        <!-- Ajustamos el Padding para dar más espacio arriba (12) -->
+        <Grid ColumnDefinitions="*, Auto" Padding="15,12,15,4" VerticalOptions="Center">
+
+            <Grid Grid.Column="0">
+                <!-- Label original centrado -->
+                <Label x:Name="PlaceholderLabel"
+                       Text="{Binding Placeholder, Source={x:Reference thisControl}}"
+                       TextColor="{StaticResource AppSubtext}"
+                       FontSize="14"
+                       VerticalOptions="Center"
+                       InputTransparent="True" />
+
+                <!-- Entry con margen superior para empujarlo hacia abajo y no chocar -->
+                <Entry x:Name="MainEntry"
+                       Text="{Binding Text, Source={x:Reference thisControl}}"
+                       IsPassword="{Binding IsPassword, Source={x:Reference thisControl}}"
+                       Keyboard="{Binding Keyboard, Source={x:Reference thisControl}}"
+                       FontSize="14"
+                       HeightRequest="35"
+                       Margin="0,16,0,0" 
+                       BackgroundColor="Transparent"
+                       Focused="OnEntryFocused"
+                       Unfocused="OnEntryUnfocused"
+                       TextChanged="OnEntryTextChanged" />
+            </Grid>
+
+            <Button Grid.Column="1"
+                    Text="i"
+                    TextColor="{StaticResource AppYellow}"
+                    BackgroundColor="Transparent"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    CornerRadius="20"
+                    IsVisible="{Binding HasInfo, Source={x:Reference thisControl}}"
+                    Command="{Binding InfoCommand, Source={x:Reference thisControl}}"
+                    VerticalOptions="Center" />
+        </Grid>
+    </Border>
+</ContentView>
