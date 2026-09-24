@@ -2,25 +2,315 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:BarraApp.Mobile.ViewModels.Dashboard"
+             xmlns:core="clr-namespace:Core.Entidades.Enti_Clases;assembly=Core"
              x:Class="BarraApp.Mobile.Views.Dashboard.DashboardPage"
              x:DataType="viewmodels:DashboardViewModel"
-             Title="Inicio">
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource AppBg}">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="30,0" Spacing="25">
-            <Image Source="dotnet_bot.png"
-                   HeightRequest="185"
-                   Aspect="AspectFit"
-                   SemanticProperties.Description="BarraApp" />
+    <Grid>
 
-            <Label Text="{Binding TituloBienvenida}"
-                   Style="{StaticResource Headline}"
-                   SemanticProperties.HeadingLevel="Level1" />
+        <!-- 1. CONTENIDO BASE Y BARRA INFERIOR         -->
+        <Grid RowDefinitions="*, Auto">
 
-            <Label Text="Dashboard principal — placeholder, se completa cuando toque su sprint."
-                   Style="{StaticResource SubHeadline}"
-                   SemanticProperties.HeadingLevel="Level2" />
-        </VerticalStackLayout>
-    </ScrollView>
+            <!-- CONTENEDOR PRINCIPAL DE PESTAÑAS -->
+            <Grid Grid.Row="0">
 
+                <!-- ====== VISTA: INICIO ====== -->
+                <ScrollView IsVisible="{Binding VerInicio}">
+                    <VerticalStackLayout Padding="20,20,20,40" Spacing="25">
+
+                        <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
+                            <!-- Botón Menú Hamburguesa conectado al ToggleMenuLateralCommand -->
+                            <Path Data="M4 6h16M4 12h16M4 18h16" Stroke="{StaticResource AppText}" StrokeThickness="2" StrokeLineCap="Round" WidthRequest="24" HeightRequest="24" VerticalOptions="Center" BackgroundColor="Transparent">
+                                <Path.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ToggleMenuLateralCommand}"/>
+                                </Path.GestureRecognizers>
+                            </Path>
+
+                            <Label Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Barra" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource AppText}"/>
+                                        <Span Text="App" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource AppYellow}"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                            <Border Grid.Column="2" Stroke="{StaticResource AppYellow}" StrokeThickness="2" StrokeShape="RoundRectangle 20" HeightRequest="40" WidthRequest="40" BackgroundColor="{StaticResource Gray600}">
+                                <Label Text="🧔🏻‍♂️" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                        </Grid>
+
+                        <Border Style="{StaticResource InputBorderStyle}" StrokeShape="RoundRectangle 16" HeightRequest="55" Padding="15,0">
+                            <Grid ColumnDefinitions="Auto, *">
+                                <Path Data="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" Stroke="{StaticResource Gray500}" StrokeThickness="2" StrokeLineCap="Round" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" Margin="0,0,10,0"/>
+                                <Entry Grid.Column="1" Placeholder="Buscar por nombre o marca..." ReturnCommand="{Binding BuscarTextoCommand}" ReturnCommandParameter="{Binding Text, Source={RelativeSource Self}}" VerticalOptions="Center" BackgroundColor="Transparent"/>
+                            </Grid>
+                        </Border>
+
+                        <Border BackgroundColor="{StaticResource AppYellow}" StrokeShape="RoundRectangle 32" HeightRequest="140" StrokeThickness="0" Margin="0,10,0,0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding EscanearCommand}"/>
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8">
+                                <Border BackgroundColor="#1A000000" StrokeShape="RoundRectangle 25" HeightRequest="50" WidthRequest="50" StrokeThickness="0" HorizontalOptions="Center">
+                                    <Path Data="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" Stroke="{StaticResource Black}" StrokeThickness="2" StrokeLineCap="Round" WidthRequest="26" HeightRequest="26" VerticalOptions="Center" HorizontalOptions="Center"/>
+                                </Border>
+                                <Label Text="Escanear Código" TextColor="{StaticResource Black}" FontAttributes="Bold" FontSize="20" HorizontalOptions="Center"/>
+                                <Label Text="Encuentra el mejor precio" TextColor="{StaticResource Black}" Opacity="0.8" FontSize="13" HorizontalOptions="Center"/>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <VerticalStackLayout Spacing="15" Margin="0,15,0,0">
+                            <Label Text="BÚSQUEDAS RECIENTES" TextColor="{StaticResource Gray400}" FontSize="12" FontAttributes="Bold" />
+                            <ActivityIndicator IsRunning="{Binding EstaCargando}" IsVisible="{Binding EstaCargando}" Color="{StaticResource AppYellow}" HorizontalOptions="Center" Margin="0,20"/>
+                            <Label Text="No hay búsquedas recientes." TextColor="{StaticResource AppSubtext}" IsVisible="{Binding NoHayBusquedas}" HorizontalOptions="Center" Margin="0,20"/>
+                            <CollectionView ItemsSource="{Binding BusquedasRecientes}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="core:HistorialBusqueda">
+                                        <Border BackgroundColor="{StaticResource AppCard}" Stroke="{StaticResource AppBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="15" Margin="0,0,0,10">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DashboardViewModel}}, Path=BuscarTextoCommand}" CommandParameter="{Binding terminoBusqueda}"/>
+                                            </Border.GestureRecognizers>
+                                            <Grid ColumnDefinitions="Auto, *">
+                                                <Border BackgroundColor="#1F2937" StrokeShape="RoundRectangle 20" HeightRequest="40" WidthRequest="40" StrokeThickness="0" Margin="0,0,15,0">
+                                                    <Path Data="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" Stroke="{StaticResource Gray400}" StrokeThickness="2" StrokeLineCap="Round" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" HorizontalOptions="Center"/>
+                                                </Border>
+                                                <Label Grid.Column="1" Text="{Binding terminoBusqueda, TargetNullValue={Binding nombreProducto}}" TextColor="{StaticResource AppText}" FontAttributes="Bold" VerticalOptions="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </ScrollView>
+
+                <!-- ====== VISTA: LISTAS ====== -->
+                <Grid IsVisible="{Binding VerListas}" Padding="20,20,20,40" RowDefinitions="Auto, Auto, *">
+                    <Label Grid.Row="0" Text="Mis Listas" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource AppText}" Margin="0,0,0,20"/>
+                    <Grid Grid.Row="1" ColumnDefinitions="*, Auto" ColumnSpacing="10" Margin="0,0,0,20">
+                        <Border Style="{StaticResource InputBorderStyle}" StrokeShape="RoundRectangle 12" HeightRequest="50" Padding="15,0">
+                            <Entry Placeholder="Añadir producto rápido..." PlaceholderColor="{StaticResource Gray500}" FontSize="14" VerticalOptions="Center" BackgroundColor="Transparent"/>
+                        </Border>
+                        <Button Grid.Column="1" Text="+" BackgroundColor="{StaticResource AppYellow}" TextColor="{StaticResource Black}" FontAttributes="Bold" FontSize="24" WidthRequest="50" HeightRequest="50" CornerRadius="12"/>
+                    </Grid>
+                    <ScrollView Grid.Row="2">
+                        <Border BackgroundColor="{StaticResource AppCard}" Stroke="{StaticResource AppBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="15">
+                            <Grid ColumnDefinitions="Auto, *">
+                                <CheckBox Color="{StaticResource AppYellow}" VerticalOptions="Center" Margin="0,0,10,0"/>
+                                <Label Grid.Column="1" Text="Pan Bimbo Blanco" TextColor="{StaticResource AppText}" FontAttributes="Bold" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+                    </ScrollView>
+                </Grid>
+
+                <!-- ====== VISTA: COMUNIDAD  ====== -->
+                <Grid IsVisible="{Binding VerComunidad}" Padding="20,20,20,40">
+                    <VerticalStackLayout Spacing="20">
+                        <Label Text="Comunidad" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource AppText}"/>
+                        <Grid VerticalOptions="FillAndExpand" Margin="0,40,0,0">
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="15">
+                                <Path Data="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" 
+                                      Stroke="{StaticResource Gray500}" StrokeThickness="1.5" StrokeLineCap="Round" WidthRequest="64" HeightRequest="64" HorizontalOptions="Center"/>
+                                <Label Text="Descubre ofertas y publicaciones de otros usuarios." TextColor="{StaticResource Gray400}" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Grid>
+
+                <!-- ====== VISTA: GREMIOS (GUIDS) ====== -->
+                <Grid IsVisible="{Binding VerGremios}" Padding="20,20,20,40">
+                    <VerticalStackLayout Spacing="20">
+                        <Label Text="Gremios" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource AppText}"/>
+                        <Grid VerticalOptions="FillAndExpand" Margin="0,40,0,0">
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="15">
+                                <Path Data="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" 
+                                      Stroke="{StaticResource Gray500}" StrokeThickness="1.5" StrokeLineCap="Round" WidthRequest="64" HeightRequest="64" HorizontalOptions="Center"/>
+                                <Label Text="Únete o crea un Gremio para colaborar." TextColor="{StaticResource Gray400}" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Grid>
+
+            </Grid>
+
+            <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+            <Border Grid.Row="1" BackgroundColor="{StaticResource AppBg}" Stroke="{StaticResource AppBorder}" 
+                    StrokeThickness="1" StrokeShape="Rectangle" Padding="20,10,20,20" VerticalOptions="End">
+                <Grid ColumnDefinitions="*, *, *, *">
+
+                    <!-- Tab: Inicio -->
+                    <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="4">
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CambiarPestanaCommand}" CommandParameter="Inicio"/>
+                        </VerticalStackLayout.GestureRecognizers>
+                        <VerticalStackLayout.Triggers>
+                            <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding VerInicio}" Value="False">
+                                <Setter Property="Opacity" Value="0.7" />
+                            </DataTrigger>
+                        </VerticalStackLayout.Triggers>
+
+                        <Path Data="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" 
+                              StrokeThickness="2" StrokeLineCap="Round" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" Stroke="{StaticResource AppYellow}">
+                            <Path.Triggers>
+                                <DataTrigger TargetType="Path" Binding="{Binding VerInicio}" Value="False">
+                                    <Setter Property="Stroke" Value="{StaticResource Gray400}" />
+                                </DataTrigger>
+                            </Path.Triggers>
+                        </Path>
+                        <Label Text="Inicio" FontSize="10" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{StaticResource AppYellow}">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding VerInicio}" Value="False">
+                                    <Setter Property="TextColor" Value="{StaticResource Gray400}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </VerticalStackLayout>
+
+                    <!-- Tab: Listas -->
+                    <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="4" Opacity="0.7">
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CambiarPestanaCommand}" CommandParameter="Listas"/>
+                        </VerticalStackLayout.GestureRecognizers>
+                        <VerticalStackLayout.Triggers>
+                            <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding VerListas}" Value="True">
+                                <Setter Property="Opacity" Value="1.0" />
+                            </DataTrigger>
+                        </VerticalStackLayout.Triggers>
+
+                        <Path Data="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" StrokeThickness="2" StrokeLineCap="Round" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" Stroke="{StaticResource Gray400}">
+                            <Path.Triggers>
+                                <DataTrigger TargetType="Path" Binding="{Binding VerListas}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource AppYellow}" />
+                                </DataTrigger>
+                            </Path.Triggers>
+                        </Path>
+                        <Label Text="Listas" FontSize="10" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{StaticResource Gray400}">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding VerListas}" Value="True">
+                                    <Setter Property="TextColor" Value="{StaticResource AppYellow}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </VerticalStackLayout>
+
+                    <!-- Tab: Comunidad -->
+                    <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="4" Opacity="0.7">
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CambiarPestanaCommand}" CommandParameter="Comunidad"/>
+                        </VerticalStackLayout.GestureRecognizers>
+                        <VerticalStackLayout.Triggers>
+                            <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding VerComunidad}" Value="True">
+                                <Setter Property="Opacity" Value="1.0" />
+                            </DataTrigger>
+                        </VerticalStackLayout.Triggers>
+
+                        <Path Data="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" StrokeThickness="2" StrokeLineCap="Round" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" Stroke="{StaticResource Gray400}">
+                            <Path.Triggers>
+                                <DataTrigger TargetType="Path" Binding="{Binding VerComunidad}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource AppYellow}" />
+                                </DataTrigger>
+                            </Path.Triggers>
+                        </Path>
+                        <Label Text="Comunidad" FontSize="10" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{StaticResource Gray400}">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding VerComunidad}" Value="True">
+                                    <Setter Property="TextColor" Value="{StaticResource AppYellow}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </VerticalStackLayout>
+
+                    <!-- Tab: Gremios -->
+                    <VerticalStackLayout Grid.Column="3" HorizontalOptions="Center" Spacing="4" Opacity="0.7">
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CambiarPestanaCommand}" CommandParameter="Gremios"/>
+                        </VerticalStackLayout.GestureRecognizers>
+                        <VerticalStackLayout.Triggers>
+                            <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding VerGremios}" Value="True">
+                                <Setter Property="Opacity" Value="1.0" />
+                            </DataTrigger>
+                        </VerticalStackLayout.Triggers>
+
+                        <Path Data="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" StrokeThickness="2" StrokeLineCap="Round" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" Stroke="{StaticResource Gray400}">
+                            <Path.Triggers>
+                                <DataTrigger TargetType="Path" Binding="{Binding VerGremios}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource AppYellow}" />
+                                </DataTrigger>
+                            </Path.Triggers>
+                        </Path>
+                        <Label Text="Gremios" FontSize="10" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{StaticResource Gray400}">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding VerGremios}" Value="True">
+                                    <Setter Property="TextColor" Value="{StaticResource AppYellow}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </VerticalStackLayout>
+
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 2. MENÚ LATERAL (SIDEBAR) OVERLAY          -->
+
+        <!-- Fondo oscuro semitransparente -->
+        <BoxView Color="#CC000000" IsVisible="{Binding MenuLateralVisible}">
+            <BoxView.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding ToggleMenuLateralCommand}"/>
+            </BoxView.GestureRecognizers>
+        </BoxView>
+
+        <!-- Contenedor del Menú Lateral -->
+        <Border WidthRequest="280" HorizontalOptions="Start" BackgroundColor="{StaticResource AppBg}" 
+                StrokeThickness="0" IsVisible="{Binding MenuLateralVisible}">
+            <VerticalStackLayout>
+
+                <!-- Cabecera del Menú (Perfil Rápido) -->
+                <Grid ColumnDefinitions="Auto, *" Padding="20,40,20,20" BackgroundColor="{StaticResource AppCard}" Margin="0,0,0,10">
+                    <Border Stroke="{StaticResource AppYellow}" StrokeThickness="2" StrokeShape="RoundRectangle 25" HeightRequest="50" WidthRequest="50" BackgroundColor="{StaticResource Gray600}">
+                        <Label Text="🧔🏻‍♂️" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="15,0,0,0">
+                        <Label Text="{Binding NombreUsuario}" FontAttributes="Bold" FontSize="18" TextColor="{StaticResource AppText}"/>
+                        <Border BackgroundColor="{StaticResource AppYellow}" StrokeShape="RoundRectangle 10" HorizontalOptions="Start" Padding="6,2" Margin="0,5,0,0">
+                            <Label Text="PREMIUM" TextColor="{StaticResource Black}" FontSize="10" FontAttributes="Bold"/>
+                        </Border>
+                    </VerticalStackLayout>
+                </Grid>
+
+                <!-- Opciones Secundarias -->
+                <VerticalStackLayout Spacing="5" Padding="10,0">
+                    <!-- Mi Perfil -->
+                    <Button Text="Mi Perfil" ImageSource="{FontImage FontFamily=FAS, Glyph='👤', Color={StaticResource AppText}, Size=20}"
+                            Command="{Binding OpcionMenuCommand}" CommandParameter="Perfil" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+
+                    <!-- Mis Favoritos -->
+                    <Button Text="Mis Favoritos" ImageSource="{FontImage FontFamily=FAS, Glyph='❤️', Color={StaticResource AppText}, Size=20}"
+                            Command="{Binding OpcionMenuCommand}" CommandParameter="Favoritos" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+
+                    <!-- Historial Completo -->
+                    <Button Text="Historial Completo" ImageSource="{FontImage FontFamily=FAS, Glyph='🕒', Color={StaticResource AppText}, Size=20}"
+                            Command="{Binding OpcionMenuCommand}" CommandParameter="Historial" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+
+                    <!-- Pagos / Suscripción -->
+                    <Button Text="Suscripción / Pagos" ImageSource="{FontImage FontFamily=FAS, Glyph='💳', Color={StaticResource AppText}, Size=20}"
+                            Command="{Binding OpcionMenuCommand}" CommandParameter="Pagos" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+
+                    <BoxView HeightRequest="1" Color="{StaticResource AppBorder}" Margin="15,10"/>
+
+                    <!-- Configuración -->
+                    <Button Text="Configuración" ImageSource="{FontImage FontFamily=FAS, Glyph='⚙️', Color={StaticResource AppText}, Size=20}"
+                            Command="{Binding OpcionMenuCommand}" CommandParameter="Configuracion" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+
+                    <!-- Cerrar Sesión -->
+                    <Button Text="Cerrar Sesión" ImageSource="{FontImage FontFamily=FAS, Glyph='🚪', Color={StaticResource AppText}, Size=20}"
+                            Command="{Binding OpcionMenuCommand}" CommandParameter="CerrarSesion" BackgroundColor="Transparent" TextColor="#EF4444" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </Border>
+
+    </Grid>
 </ContentPage>

@@ -12,4 +12,6 @@ public class SesionService(HttpClient http) : ApiServiceBase(http), ISesionServi
     // Ruta api/usuario/registrar (Método POST)
     public Task<DTOResRegistrarUsuario> RegistrarAsync(DTORegistro dto) =>
         PostAsync<DTORegistro, DTOResRegistrarUsuario>("api/usuario/registrar", dto);
+
+
 }

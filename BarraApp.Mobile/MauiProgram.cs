@@ -5,6 +5,7 @@ using BarraApp.Mobile.ViewModels.Usuario;
 using BarraApp.Mobile.Views.Dashboard;
 using BarraApp.Mobile.Views.Usuario;
 using Microsoft.Extensions.Logging;
+using BarraApp.Mobile.Services.Historial;
 
 namespace BarraApp.Mobile;
 
@@ -53,7 +54,13 @@ public static class MauiProgram
 			client.BaseAddress = new Uri(ApiConfig.BaseUrl);
 		})
 		.AddHttpMessageHandler<AuthHeaderHandler>();
-	}
+
+        services.AddHttpClient<IHistorialService, HistorialService>(client =>
+        {
+            client.BaseAddress = new Uri(ApiConfig.BaseUrl);
+        })
+		.AddHttpMessageHandler<AuthHeaderHandler>();
+    }
 
 
 	static void RegistrarPantallas(IServiceCollection services)

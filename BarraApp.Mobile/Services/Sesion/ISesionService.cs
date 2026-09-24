@@ -6,4 +6,5 @@ public interface ISesionService
 {
     Task<DTOResLogin> LoginAsync(string correo, string pass);
     Task<DTOResRegistrarUsuario> RegistrarAsync(DTORegistro dto);
+
 }
