@@ -10,7 +10,7 @@
 
     <Grid>
 
-        <!-- 1. CONTENIDO BASE Y BARRA INFERIOR         -->
+        <!-- 1. CONTENIDO BASE Y BARRA INFERIOR -->
         <Grid RowDefinitions="*, Auto">
 
             <!-- CONTENEDOR PRINCIPAL DE PESTAÑAS -->
@@ -21,12 +21,19 @@
                     <VerticalStackLayout Padding="20,20,20,40" Spacing="25">
 
                         <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
-                            <!-- Botón Menú Hamburguesa conectado al ToggleMenuLateralCommand -->
-                            <Path Data="M4 6h16M4 12h16M4 18h16" Stroke="{StaticResource AppText}" StrokeThickness="2" StrokeLineCap="Round" WidthRequest="24" HeightRequest="24" VerticalOptions="Center" BackgroundColor="Transparent">
-                                <Path.GestureRecognizers>
+                            <!-- Botón Menú Hamburguesa conectado al ToggleMenuLateralCommand con área táctil cómoda -->
+                            <Border BackgroundColor="Transparent" StrokeThickness="0" Padding="10" VerticalOptions="Center">
+                                <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ToggleMenuLateralCommand}"/>
-                                </Path.GestureRecognizers>
-                            </Path>
+                                </Border.GestureRecognizers>
+                                <Path Data="M4 6h16M4 12h16M4 18h16" 
+                                      Stroke="{StaticResource AppText}" 
+                                      StrokeThickness="2" 
+                                      StrokeLineCap="Round" 
+                                      WidthRequest="24" 
+                                      HeightRequest="24" 
+                                      VerticalOptions="Center" />
+                            </Border>
 
                             <Label Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Label.FormattedText>
@@ -36,7 +43,12 @@
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
+
+                            <!-- Avatar superior derecho (navega al Perfil) -->
                             <Border Grid.Column="2" Stroke="{StaticResource AppYellow}" StrokeThickness="2" StrokeShape="RoundRectangle 20" HeightRequest="40" WidthRequest="40" BackgroundColor="{StaticResource Gray600}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpcionMenuCommand}" CommandParameter="Perfil"/>
+                                </Border.GestureRecognizers>
                                 <Label Text="🧔🏻‍♂️" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
                             </Border>
                         </Grid>
@@ -105,7 +117,7 @@
                     </ScrollView>
                 </Grid>
 
-                <!-- ====== VISTA: COMUNIDAD  ====== -->
+                <!-- ====== VISTA: COMUNIDAD ====== -->
                 <Grid IsVisible="{Binding VerComunidad}" Padding="20,20,20,40">
                     <VerticalStackLayout Spacing="20">
                         <Label Text="Comunidad" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource AppText}"/>
@@ -119,7 +131,7 @@
                     </VerticalStackLayout>
                 </Grid>
 
-                <!-- ====== VISTA: GREMIOS (GUIDS) ====== -->
+                <!-- ====== VISTA: GREMIOS ====== -->
                 <Grid IsVisible="{Binding VerGremios}" Padding="20,20,20,40">
                     <VerticalStackLayout Spacing="20">
                         <Label Text="Gremios" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource AppText}"/>
@@ -253,7 +265,7 @@
             </Border>
         </Grid>
 
-        <!-- 2. MENÚ LATERAL (SIDEBAR) OVERLAY          -->
+        <!-- 2. MENÚ LATERAL (SIDEBAR) OVERLAY -->
 
         <!-- Fondo oscuro semitransparente -->
         <BoxView Color="#CC000000" IsVisible="{Binding MenuLateralVisible}">
@@ -267,7 +279,7 @@
                 StrokeThickness="0" IsVisible="{Binding MenuLateralVisible}">
             <VerticalStackLayout>
 
-                <!-- Cabecera del Menú (Perfil Rápido) -->
+                <!-- Cabecera del Menú (Perfil Rápido - Decorativo) -->
                 <Grid ColumnDefinitions="Auto, *" Padding="20,40,20,20" BackgroundColor="{StaticResource AppCard}" Margin="0,0,0,10">
                     <Border Stroke="{StaticResource AppYellow}" StrokeThickness="2" StrokeShape="RoundRectangle 25" HeightRequest="50" WidthRequest="50" BackgroundColor="{StaticResource Gray600}">
                         <Label Text="🧔🏻‍♂️" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center"/>

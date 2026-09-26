@@ -1,8 +1,11 @@
+using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using BarraApp.Mobile.Services.Historial;
-using Core.Entidades.Enti_Clases;
+using BarraApp.Mobile.Views.Usuario;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Core.Entidades.Enti_Clases;
 
 namespace BarraApp.Mobile.ViewModels.Dashboard;
 
@@ -48,12 +51,29 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task OpcionMenuAsync(string opcion)
     {
-        ToggleMenuLateral(); // Cierra el menú visualmente
+        MenuLateralVisible = false; // Cierra el menú de forma explícita
+
+        if (opcion == "Perfil")
+        {
+            await Shell.Current.GoToAsync(nameof(PerfilPage));
+            return;
+        }
 
         if (opcion == "CerrarSesion")
         {
-            await Shell.Current.DisplayAlert("Cerrar Sesión", "Saliendo de la cuenta...", "OK");
-            // Aquí luego haremos la llamada a api/usuario/logout
+            bool confirmar = await Shell.Current.DisplayAlert(
+                "Cerrar Sesión",
+                "¿Estás seguro de que deseas salir?",
+                "Sí, salir",
+                "Cancelar");
+
+            if (!confirmar) return;
+
+            await Shell.Current.DisplayAlert(
+                "👋 ¡Hasta pronto!",
+                "Tu sesión se ha cerrado correctamente.",
+                "Entendido");
+
             await Shell.Current.GoToAsync("//LoginPage");
             return;
         }
