@@ -78,7 +78,32 @@ public partial class LoginPage : ContentPage
 
 ## 3. Cómo se conecta al backend (Services)
 
-`ApiConfig.BaseUrl` resuelve la URL según la plataforma (el emulador de Android usa `10.0.2.2` para llegar a `localhost` de la PC que lo hospeda; Windows usa `localhost` directo). Apunta al puerto de IIS Express de `API_4` (54346 hoy — si cambia en Visual Studio, hay que actualizarlo aquí).
+`ApiConfig.BaseUrl` es `http://localhost:54346/` en todas las plataformas (puerto de IIS Express de `API_4`; si cambia en Visual Studio, hay que actualizarlo aquí). **No uses `10.0.2.2`:** el IIS Express de Visual Studio solo atiende el host `localhost` y contesta `HTTP 400 Invalid Hostname` a cualquier otro. En Android, `localhost` es el propio teléfono, por eso hay que reenviar el puerto a la PC con el script de la sección 3.1.
+
+### 3.1 Probar en el emulador Android o en un teléfono (paso a paso)
+
+Cada vez que vayas a probar:
+
+1. **SQL Server** encendido (tu instancia local) y tu `API_4/ConnectionStrings.config` apuntando a ella (`BARRAAPPConnectionString2`).
+2. **Backend:** en Visual Studio abre la solución del backend y corre `API_4` con **F5** (IIS Express, puerto 54346).
+3. **Emulador:** arráncalo desde el Device Manager y **espera a ver la pantalla de inicio de Android**. El primer arranque tarda varios minutos.
+4. **Reenvío del puerto:** abre PowerShell en la carpeta `BARRA_FRONT` y corre:
+   ```powershell
+   .\scripts\iniciar_dev_android.ps1
+   ```
+   Debe responder `OK: emulator-5554 -> localhost:54346 ...`. **Repítelo cada vez que reinicies el emulador** (el reenvío se pierde). Con un teléfono por USB funciona igual (activa la depuración USB).
+5. **App:** en Visual Studio elige el emulador como destino y corre `BarraApp.Mobile`.
+
+Si algo falla:
+
+| Síntoma | Causa y arreglo |
+|---|---|
+| "No se pudo conectar con el servidor" | No corriste el script del paso 4, o reiniciaste el emulador. Córrelo de nuevo. |
+| El script dice que no hay dispositivo | El emulador aún no termina de arrancar, o aparece como `offline` en `adb devices`: espera y repite. |
+| HTTP 400 al hacer login | Tienes una versión vieja de `ApiConfig` con `10.0.2.2`: haz `git pull`. |
+| Error de base de datos al hacer login | Tu `ConnectionStrings.config` apunta a otra PC o SQL Server está apagado. |
+
+**Alternativa sin emulador:** corre `BarraApp.Mobile` con el destino **Windows Machine**. No necesita el script ni el emulador (también usa `localhost`).
 
 `ApiServiceBase` centraliza las llamadas HTTP:
 ```csharp
