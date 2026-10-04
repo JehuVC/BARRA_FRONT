@@ -161,7 +161,7 @@ Usuario toca "Ingresar" en LoginPage
   → ApiServiceBase.PostAsync deserializa la respuesta a DTOResLogin
   ← DTOResLogin { resultado, error[], usuario, sesion }
   → LoginViewModel revisa "resultado":
-        false → MensajeError = TraducirError(error[0].mensaje)   // se muestra en la Page via binding
+        false → MensajeError = MensajesError.Traducir(res.error)  // se muestra en la Page via binding
         true  → tokenStore.GuardarTokenAsync(sesion.tokenJwt)     // SecureStorage
               → Shell.Current.GoToAsync("//DashboardPage")        // navegacion absoluta, resetea el stack
 ```
@@ -179,7 +179,31 @@ Usuario toca "Ingresar" en LoginPage
 9. Compilar al menos un target antes de dar por hecho que sirve: `dotnet build BarraApp.Mobile\BarraApp.Mobile.csproj -f net10.0-android`.
 10. Probar contra la API real corriendo localmente (`API_4` con IIS Express) — un `build` exitoso no garantiza que el binding, la ruta o el contrato JSON estén bien.
 
-## 8. Reglas rápidas (resumen)
+## 8. Convenciones compartidas (ya implementadas, úsenlas)
+
+**Mensajes de error — `MensajesError.Traducir(res.error)`** (`Services/Api/MensajesError.cs`). El backend manda el *nombre del enum* en `mensaje` (ej. `"correoYaRegistrado"`), que no es para el usuario. Nunca muestres `res.error[0].mensaje` directo: pásalo por `MensajesError.Traducir(res.error, "texto por defecto")`. Traduce por `codigo` (el `enumErrores`). **Si el backend agrega un código nuevo a `enumErrores`, agrégale su texto en ese `switch`** (si falta, cae al texto por defecto).
+
+**Validaciones antes de enviar — `ValidacionCliente`** (`Helpers/ValidacionCliente.cs`): `EsEmailValido`, `EsPasswordValida` (8+, mayúscula, minúscula, número y carácter especial; el backend exige menos, a propósito). El backend siempre vuelve a validar: la del front es solo para no gastar una llamada.
+
+**Sesión.** El JWT vive en `SecureStorage` (`IAuthTokenStore`).
+- Al abrir la app, `LoginPage` salta directo al Dashboard si ya hay token guardado (`LoginViewModel.InicializarAsync`).
+- Si cualquier llamada protegida responde **401** (token vencido o sesión cerrada), `AuthHeaderHandler` borra el token y manda a `//LoginPage` solo; el ViewModel recibe un `ApiException("Tu sesión expiró...")`. No hay que manejar el 401 pantalla por pantalla.
+- Para cerrar sesión: llamar `ISesionService.LogoutAsync()` (revoca el JWT en el servidor) **y** `IAuthTokenStore.LimpiarTokenAsync()`. Solo navegar al login deja la sesión viva.
+
+**Pasar datos entre pantallas.** Por query string y `IQueryAttributable` en el ViewModel destino. Escapa los textos:
+```csharp
+await Shell.Current.GoToAsync($"{nameof(ListaDetallePage)}?guidLista={lista.GuidLista}&nombre={Uri.EscapeDataString(lista.Nombre)}");
+// en el ViewModel destino
+public void ApplyQueryAttributes(IDictionary<string, object> query) { ... query["guidLista"] ... }
+```
+
+**Pedir un texto corto** (renombrar, crear lista): `Shell.Current.DisplayPromptAsync(...)` en vez de armar una pantalla. **Alertas:** `DisplayAlertAsync` (en .NET 10 `DisplayAlert` está obsoleto).
+
+**Choque de nombres.** Hay entidades de `Core` que se llaman igual que una carpeta/namespace del front (`ListaCompra`, `Guild`, `Producto`). Dentro de `BarraApp.Mobile.ViewModels.ListaCompra`, escribir `ListaCompra` resuelve al namespace y no compila. Usa un alias: `using ListaCompraEntidad = Core.Entidades.Enti_Clases.ListaCompra;`.
+
+**Pantallas ya hechas (para no duplicar trabajo):** Login, Registro, Recuperar contraseña (2 pasos), Perfil, Dashboard, Gremio (crear / unirse / miembros / salir), Mis Listas (crear / renombrar / eliminar) y Detalle de lista (agregar producto por búsqueda, cantidad, marcar comprado, quitar).
+
+## 9. Reglas rápidas (resumen)
 
 - 1 Page = 1 ViewModel, misma carpeta de dominio, mismo nombre base.
 - El ViewModel no conoce controles de UI ni code-behind — todo por binding/`Command`.

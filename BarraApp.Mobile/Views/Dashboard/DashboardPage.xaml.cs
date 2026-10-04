@@ -17,5 +17,6 @@ public partial class DashboardPage : ContentPage
         base.OnAppearing();
         // Ejecuta la llamada a la API cada vez que la pantalla aparece
         _viewModel.CargarHistorialCommand.Execute(null);
+        _viewModel.CargarNombreCommand.Execute(null);
     }
 }

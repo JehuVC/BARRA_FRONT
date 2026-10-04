@@ -17,6 +17,11 @@ public abstract class ApiServiceBase(HttpClient http)
             throw new ApiException("No se pudo conectar con el servidor. Verifique su conexion e intente de nuevo.", ex);
         }
 
+        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            throw new ApiException("Tu sesión expiró. Inicia sesión de nuevo.");
+        }
+
         if (!response.IsSuccessStatusCode)
         {
             throw new ApiException($"El servidor respondio con un error ({(int)response.StatusCode}).");

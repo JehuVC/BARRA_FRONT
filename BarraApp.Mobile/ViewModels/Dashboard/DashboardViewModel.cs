@@ -1,7 +1,11 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using BarraApp.Mobile.Services.Api;
 using BarraApp.Mobile.Services.Historial;
+using BarraApp.Mobile.Services.Sesion;
+using BarraApp.Mobile.Views.Guild;
+using BarraApp.Mobile.Views.ListaCompra;
 using BarraApp.Mobile.Views.Usuario;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -12,8 +16,10 @@ namespace BarraApp.Mobile.ViewModels.Dashboard;
 public partial class DashboardViewModel : ObservableObject
 {
     private readonly IHistorialService _historialService;
+    private readonly ISesionService _sesionService;
+    private readonly IAuthTokenStore _tokenStore;
 
-    [ObservableProperty] private string nombreUsuario = "Néstor";
+    [ObservableProperty] private string nombreUsuario = "Usuario";
     [ObservableProperty] private bool estaCargando;
     [ObservableProperty] private bool noHayBusquedas;
 
@@ -28,14 +34,48 @@ public partial class DashboardViewModel : ObservableObject
 
     public ObservableCollection<HistorialBusqueda> BusquedasRecientes { get; } = new();
 
-    public DashboardViewModel(IHistorialService historialService)
+    public DashboardViewModel(IHistorialService historialService, ISesionService sesionService, IAuthTokenStore tokenStore)
     {
         _historialService = historialService;
+        _sesionService = sesionService;
+        _tokenStore = tokenStore;
+    }
+
+    // Reemplaza el nombre de ejemplo por el del usuario autenticado.
+    [RelayCommand]
+    public async Task CargarNombreAsync()
+    {
+        try
+        {
+            var res = await _sesionService.ObtenerPerfilAsync();
+            if (res.resultado && res.usuario is not null && !string.IsNullOrWhiteSpace(res.usuario.nombre))
+            {
+                NombreUsuario = res.usuario.nombre;
+            }
+        }
+        catch (ApiException)
+        {
+            // Si falla se deja el nombre por defecto; el mensaje de sesion expirada ya lo maneja AuthHeaderHandler.
+        }
     }
 
     [RelayCommand]
-    private void CambiarPestana(string pestana)
+    private async Task CambiarPestana(string pestana)
     {
+        // Listas y Gremios son pantallas propias (se abren encima, igual que Perfil); las demas
+        // pestañas siguen siendo contenido de esta misma pagina.
+        if (pestana == "Listas")
+        {
+            await Shell.Current.GoToAsync(nameof(ListasPage));
+            return;
+        }
+
+        if (pestana == "Gremios")
+        {
+            await Shell.Current.GoToAsync(nameof(GuildPage));
+            return;
+        }
+
         VerInicio = pestana == "Inicio";
         VerListas = pestana == "Listas";
         VerComunidad = pestana == "Comunidad";
@@ -68,6 +108,19 @@ public partial class DashboardViewModel : ObservableObject
                 "Cancelar");
 
             if (!confirmar) return;
+
+            // Antes solo navegaba al login: la sesion seguia viva en el servidor y el JWT guardado
+            // en el telefono. Ahora se cierra en el backend (revoca el JWT) y se borra el token local.
+            try
+            {
+                await _sesionService.LogoutAsync();
+            }
+            catch (ApiException)
+            {
+                // Sin conexion o JWT ya vencido: igual se borra la sesion local.
+            }
+
+            await _tokenStore.LimpiarTokenAsync();
 
             await Shell.Current.DisplayAlert(
                 "👋 ¡Hasta pronto!",

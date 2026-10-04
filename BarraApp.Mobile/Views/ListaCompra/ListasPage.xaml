@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BarraApp.Mobile.ViewModels.ListaCompra"
+             xmlns:core="clr-namespace:Core.Entidades.Enti_Clases;assembly=Core"
+             xmlns:conv="clr-namespace:BarraApp.Mobile.Converters"
+             x:Class="BarraApp.Mobile.Views.ListaCompra.ListasPage"
+             x:DataType="vm:ListasViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource AppBg}">
+
+    <ContentPage.Resources>
+        <conv:NotNullToBoolConverter x:Key="NotNull" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,25,20,40"
+                             Spacing="16"
+                             MaximumWidthRequest="520"
+                             HorizontalOptions="Center">
+
+            <!-- Barra superior -->
+            <Grid ColumnDefinitions="Auto, *, Auto">
+                <Border BackgroundColor="{StaticResource AppCard}"
+                        Stroke="{StaticResource AppBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        HeightRequest="40"
+                        WidthRequest="40">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding VolverCommand}" />
+                    </Border.GestureRecognizers>
+                    <Path Data="M15 19l-7-7 7-7"
+                          Stroke="{StaticResource AppText}"
+                          StrokeThickness="2"
+                          StrokeLineCap="Round"
+                          WidthRequest="18"
+                          HeightRequest="18"
+                          HorizontalOptions="Center"
+                          VerticalOptions="Center" />
+                </Border>
+
+                <Label Grid.Column="1"
+                       Text="Mis Listas"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       VerticalOptions="Center"
+                       Margin="15,0,0,0" />
+
+                <Button Grid.Column="2"
+                        Text="+"
+                        FontSize="24"
+                        WidthRequest="44"
+                        HeightRequest="44"
+                        MinimumHeightRequest="44"
+                        Padding="0"
+                        CornerRadius="12"
+                        Command="{Binding CrearCommand}"
+                        IsEnabled="{Binding PuedeInteractuar}" />
+            </Grid>
+
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}"
+                               IsVisible="{Binding EstaOcupado}"
+                               HeightRequest="36"
+                               HorizontalOptions="Center" />
+
+            <Border BackgroundColor="#2A1212"
+                    Stroke="#EF4444"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="14"
+                    IsVisible="{Binding HasError}">
+                <Label Text="{Binding MensajeError}"
+                       TextColor="#EF4444"
+                       FontSize="13"
+                       LineBreakMode="WordWrap" />
+            </Border>
+
+            <!-- Estado vacio -->
+            <VerticalStackLayout Spacing="8" Margin="0,40,0,0" IsVisible="{Binding NoHayListas}">
+                <Label Text="🛒" FontSize="42" HorizontalOptions="Center" />
+                <Label Text="Todavía no tienes listas"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center" />
+                <Label Text="Toca el botón + para crear la primera."
+                       TextColor="{StaticResource AppSubtext}"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <!-- Listas -->
+            <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding Listas}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="core:ListaCompra">
+                        <Border BackgroundColor="{StaticResource AppCard}"
+                                Stroke="{StaticResource AppBorder}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 18"
+                                Padding="16,14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ListasViewModel}}, Path=AbrirCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+
+                            <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="6">
+                                <VerticalStackLayout Spacing="3" VerticalOptions="Center">
+                                    <Label Text="{Binding Nombre}" FontSize="17" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                                    <Label Text="👥 Compartida con tu gremio"
+                                           TextColor="{StaticResource AppYellow}"
+                                           FontSize="12"
+                                           IsVisible="{Binding GuidGuild, Converter={StaticResource NotNull}}" />
+                                    <Label Text="{Binding FechaModificacion, StringFormat='Modificada: {0:dd/MM/yyyy}'}"
+                                           TextColor="{StaticResource AppSubtext}"
+                                           FontSize="12" />
+                                </VerticalStackLayout>
+
+                                <Button Grid.Column="1"
+                                        Text="✏️"
+                                        FontSize="16"
+                                        BackgroundColor="Transparent"
+                                        WidthRequest="40"
+                                        HeightRequest="40"
+                                        MinimumHeightRequest="40"
+                                        Padding="0"
+                                        VerticalOptions="Center"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ListasViewModel}}, Path=RenombrarCommand}"
+                                        CommandParameter="{Binding .}" />
+
+                                <Button Grid.Column="2"
+                                        Text="🗑️"
+                                        FontSize="16"
+                                        BackgroundColor="Transparent"
+                                        WidthRequest="40"
+                                        HeightRequest="40"
+                                        MinimumHeightRequest="40"
+                                        Padding="0"
+                                        VerticalOptions="Center"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ListasViewModel}}, Path=EliminarCommand}"
+                                        CommandParameter="{Binding .}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

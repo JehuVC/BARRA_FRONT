@@ -30,4 +30,19 @@ public class SesionService(HttpClient http) : ApiServiceBase(http), ISesionServi
     // Ruta api/dispositivo/guardarToken (Método POST)
     public Task<object> GuardarTokenDispositivoAsync(string tokenDispositivo) =>
         PostAsync<object, object>("api/dispositivo/guardarToken", new { tokenDispositivo });
+
+    // Ruta api/usuario/recuperarPassword (Método POST, pública)
+    public Task<ResRecuperarPassword> RecuperarPasswordAsync(string correo) =>
+        PostAsync<DTORecuperarPassword, ResRecuperarPassword>("api/usuario/recuperarPassword",
+            new DTORecuperarPassword { correo = correo });
+
+    // Ruta api/usuario/validarCodigoRecuperacion (Método POST, pública)
+    public Task<ResValidarToken> ValidarCodigoRecuperacionAsync(string correo, string codigo) =>
+        PostAsync<DTOValidarCodigoRecuperacion, ResValidarToken>("api/usuario/validarCodigoRecuperacion",
+            new DTOValidarCodigoRecuperacion { correo = correo, codigo = codigo });
+
+    // Ruta api/usuario/restablecerClave (Método POST, pública)
+    public Task<ResRestablecerClave> RestablecerClaveAsync(string correo, string codigo, string nuevaClave) =>
+        PostAsync<DTORestablecerClave, ResRestablecerClave>("api/usuario/restablecerClave",
+            new DTORestablecerClave { correo = correo, codigo = codigo, nuevaClave = nuevaClave });
 }

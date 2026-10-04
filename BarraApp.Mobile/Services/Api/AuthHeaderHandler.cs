@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 
 namespace BarraApp.Mobile.Services.Api;
@@ -5,15 +6,57 @@ namespace BarraApp.Mobile.Services.Api;
 
 public class AuthHeaderHandler(IAuthTokenStore tokenStore) : DelegatingHandler
 {
+    private static int _redirigiendoALogin;
+
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request, CancellationToken cancellationToken)
     {
         var token = await tokenStore.ObtenerTokenAsync();
-        if (!string.IsNullOrWhiteSpace(token))
+        bool teniaToken = !string.IsNullOrWhiteSpace(token);
+        if (teniaToken)
         {
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
-        return await base.SendAsync(request, cancellationToken);
+        var response = await base.SendAsync(request, cancellationToken);
+
+        // El backend responde 401 solo cuando el JWT esta vencido, es invalido o la sesion
+        // fue cerrada (login responde 200 aunque la clave sea mala): el token guardado ya no
+        // sirve, asi que se borra y se manda al usuario a iniciar sesion de nuevo.
+        if (teniaToken && response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            await SesionExpiradaAsync();
+        }
+
+        return response;
+    }
+
+    private async Task SesionExpiradaAsync()
+    {
+        await tokenStore.LimpiarTokenAsync();
+
+        // Varias peticiones en paralelo pueden recibir 401 a la vez; solo la primera navega.
+        if (Interlocked.Exchange(ref _redirigiendoALogin, 1) == 1)
+        {
+            return;
+        }
+
+        try
+        {
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                if (Shell.Current is null) return;
+
+                bool yaEnLogin = Shell.Current.CurrentState?.Location?.ToString()?.Contains("LoginPage") == true;
+                if (yaEnLogin) return;
+
+                await Shell.Current.GoToAsync("//LoginPage");
+                await Shell.Current.DisplayAlertAsync("Sesión expirada", "Tu sesión terminó. Inicia sesión de nuevo.", "OK");
+            });
+        }
+        finally
+        {
+            Interlocked.Exchange(ref _redirigiendoALogin, 0);
+        }
     }
 }

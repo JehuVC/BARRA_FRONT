@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BarraApp.Mobile.ViewModels.Guild"
+             xmlns:controls="clr-namespace:BarraApp.Mobile.Controls"
+             xmlns:core="clr-namespace:Core.Entidades.Enti_Clases;assembly=Core"
+             x:Class="BarraApp.Mobile.Views.Guild.GuildPage"
+             x:DataType="vm:GuildViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource AppBg}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,25,20,40"
+                             Spacing="18"
+                             MaximumWidthRequest="520"
+                             HorizontalOptions="Center">
+
+            <!-- Barra superior -->
+            <Grid ColumnDefinitions="Auto, *">
+                <Border BackgroundColor="{StaticResource AppCard}"
+                        Stroke="{StaticResource AppBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        HeightRequest="40"
+                        WidthRequest="40"
+                        HorizontalOptions="Start">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding VolverCommand}" />
+                    </Border.GestureRecognizers>
+                    <Path Data="M15 19l-7-7 7-7"
+                          Stroke="{StaticResource AppText}"
+                          StrokeThickness="2"
+                          StrokeLineCap="Round"
+                          WidthRequest="18"
+                          HeightRequest="18"
+                          HorizontalOptions="Center"
+                          VerticalOptions="Center" />
+                </Border>
+
+                <Label Grid.Column="1"
+                       Text="Mi Gremio"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       VerticalOptions="Center"
+                       Margin="15,0,0,0" />
+            </Grid>
+
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}"
+                               IsVisible="{Binding EstaOcupado}"
+                               HeightRequest="36"
+                               HorizontalOptions="Center" />
+
+            <!-- Mensaje de error -->
+            <Border BackgroundColor="#2A1212"
+                    Stroke="#EF4444"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="14"
+                    IsVisible="{Binding HasError}">
+                <Label Text="{Binding MensajeError}"
+                       TextColor="#EF4444"
+                       FontSize="13"
+                       LineBreakMode="WordWrap" />
+            </Border>
+
+            <!-- ESTADO: ya pertenece a un gremio -->
+            <VerticalStackLayout Spacing="18" IsVisible="{Binding TieneGuild}">
+
+                <Border BackgroundColor="{StaticResource AppCard}"
+                        Stroke="{StaticResource AppBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="20">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="GREMIO" TextColor="{StaticResource Gray400}" FontSize="12" FontAttributes="Bold" />
+                        <Label Text="{Binding NombreGuild}" FontSize="22" FontAttributes="Bold" />
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="Tu rol:" TextColor="{StaticResource AppSubtext}" />
+                            <Label Text="{Binding RolGuild}" TextColor="{StaticResource AppYellow}" FontAttributes="Bold" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Codigo de invitacion recien generado -->
+                <Border BackgroundColor="#1F1B05"
+                        Stroke="{StaticResource AppYellow}"
+                        StrokeThickness="1.5"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="20"
+                        IsVisible="{Binding HayCodigoGenerado}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="CÓDIGO DE INVITACIÓN" TextColor="{StaticResource AppYellow}" FontSize="12" FontAttributes="Bold" />
+                        <Label Text="{Binding CodigoGenerado}"
+                               FontSize="30"
+                               FontAttributes="Bold"
+                               CharacterSpacing="6"
+                               HorizontalOptions="Center" />
+                        <Label Text="Compártelo para que otras personas se unan. Solo se muestra ahora, anótalo."
+                               TextColor="{StaticResource AppSubtext}"
+                               FontSize="12"
+                               HorizontalTextAlignment="Center" />
+                        <Button Text="Copiar código"
+                                Command="{Binding CopiarCodigoCommand}"
+                                HeightRequest="44"
+                                MinimumHeightRequest="44"
+                                CornerRadius="12" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="MIEMBROS" TextColor="{StaticResource Gray400}" FontSize="12" FontAttributes="Bold" />
+
+                <Label Text="Aún no hay miembros para mostrar."
+                       TextColor="{StaticResource AppSubtext}"
+                       IsVisible="{Binding NoHayMiembros}"
+                       HorizontalOptions="Center" />
+
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Miembros}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="core:MiembroGuild">
+                            <Border BackgroundColor="{StaticResource AppCard}"
+                                    Stroke="{StaticResource AppBorder}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 16"
+                                    Padding="16,12">
+                                <Grid ColumnDefinitions="*, Auto">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="{Binding nombre}" FontAttributes="Bold" FontSize="16" />
+                                        <Label Text="{Binding correo}" TextColor="{StaticResource AppSubtext}" FontSize="12" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding rolGuild}"
+                                           TextColor="{StaticResource AppYellow}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Button Text="Salir del gremio"
+                        Command="{Binding SalirCommand}"
+                        IsEnabled="{Binding PuedeInteractuar}"
+                        BackgroundColor="Transparent"
+                        TextColor="#EF4444"
+                        BorderColor="#EF4444"
+                        BorderWidth="1.5"
+                        Margin="0,10,0,0" />
+            </VerticalStackLayout>
+
+            <!-- ESTADO: sin gremio -->
+            <VerticalStackLayout Spacing="22" IsVisible="{Binding NoTieneGuild}">
+
+                <Label Text="Todavía no perteneces a ningún gremio. Crea uno nuevo o únete con un código."
+                       TextColor="{StaticResource AppSubtext}"
+                       HorizontalTextAlignment="Center" />
+
+                <!-- Crear -->
+                <Border BackgroundColor="{StaticResource AppCard}"
+                        Stroke="{StaticResource AppBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="18">
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="Crear un gremio" FontSize="18" FontAttributes="Bold" />
+
+                        <controls:FloatingEntry Placeholder="Nombre del gremio"
+                                                Text="{Binding NuevoNombre}"
+                                                IsEnabled="{Binding PuedeInteractuar}" />
+
+                        <controls:FloatingEntry Placeholder="Descripción (opcional)"
+                                                Text="{Binding NuevaDescripcion}"
+                                                IsEnabled="{Binding PuedeInteractuar}" />
+
+                        <Button Text="Crear gremio"
+                                Command="{Binding CrearGuildCommand}"
+                                IsEnabled="{Binding PuedeInteractuar}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Unirse -->
+                <Border BackgroundColor="{StaticResource AppCard}"
+                        Stroke="{StaticResource AppBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="18">
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="Unirme con un código" FontSize="18" FontAttributes="Bold" />
+
+                        <controls:FloatingEntry Placeholder="Código de invitación"
+                                                Text="{Binding CodigoInvitacion}"
+                                                IsEnabled="{Binding PuedeInteractuar}" />
+
+                        <Button Text="Unirme"
+                                Command="{Binding UnirseCommand}"
+                                IsEnabled="{Binding PuedeInteractuar}" />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

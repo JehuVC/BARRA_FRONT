@@ -23,4 +23,13 @@ public interface ISesionService
 
     // Ruta api/dispositivo/guardarToken (Método POST)
     Task<object> GuardarTokenDispositivoAsync(string tokenDispositivo);
+
+    // Ruta api/usuario/recuperarPassword (Método POST, pública)
+    Task<ResRecuperarPassword> RecuperarPasswordAsync(string correo);
+
+    // Ruta api/usuario/validarCodigoRecuperacion (Método POST, pública)
+    Task<ResValidarToken> ValidarCodigoRecuperacionAsync(string correo, string codigo);
+
+    // Ruta api/usuario/restablecerClave (Método POST, pública)
+    Task<ResRestablecerClave> RestablecerClaveAsync(string correo, string codigo, string nuevaClave);
 }

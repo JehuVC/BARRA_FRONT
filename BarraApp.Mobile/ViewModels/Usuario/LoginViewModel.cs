@@ -54,7 +54,7 @@ public partial class LoginViewModel(ISesionService sesionService, IAuthTokenStor
 
             if (!res.resultado || res.sesion is null)
             {
-                MensajeError = TraducirError(res.error?.FirstOrDefault()?.mensaje);
+                MensajeError = MensajesError.Traducir(res.error, "No se pudo iniciar sesión. Intenta de nuevo.");
                 return;
             }
 
@@ -71,17 +71,36 @@ public partial class LoginViewModel(ISesionService sesionService, IAuthTokenStor
         }
     }
 
-    private static string TraducirError(string? codigo) => codigo switch
+    // Sesion recordada (FE-S6-03): si ya hay un JWT guardado se salta el login. Si ese token
+    // ya vencio o fue revocado, la primera llamada protegida responde 401 y AuthHeaderHandler
+    // lo borra y devuelve al usuario aqui.
+    [RelayCommand]
+    public async Task InicializarAsync()
     {
-        "credencialesInvalidas" => "Correo o contrasena incorrectos.",
-        "usuarioInactivo" => "Esta cuenta esta inactiva. Contacta a soporte.",
-        _ => "No se pudo iniciar sesion. Intenta de nuevo."
-    };
+        try
+        {
+            var token = await tokenStore.ObtenerTokenAsync();
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
+            }
+        }
+        catch (Exception)
+        {
+            // SecureStorage puede fallar (ej. cambio de bloqueo del dispositivo): se pide login normal.
+        }
+    }
 
     [RelayCommand]
     private async Task IrARegistroAsync()
     {
         await Shell.Current.GoToAsync(nameof(RegistroPage));
+    }
+
+    [RelayCommand]
+    private async Task IrARecuperarAsync()
+    {
+        await Shell.Current.GoToAsync(nameof(RecuperarPage));
     }
 
 }
