@@ -41,9 +41,12 @@ public class AuthHeaderHandler(IAuthTokenStore tokenStore) : DelegatingHandler
             return;
         }
 
-        try
+        // La navegacion NO se espera: la peticion tiene que terminar ya (el llamador recibe "Tu sesion expiro") y
+        // navegar en medio de otra pantalla que aun esta apareciendo puede fallar. Cualquier error al navegar se
+        // ignora a proposito: no debe tumbar la app (el token ya esta borrado, el siguiente intento va a Login).
+        MainThread.BeginInvokeOnMainThread(async () =>
         {
-            await MainThread.InvokeOnMainThreadAsync(async () =>
+            try
             {
                 if (Shell.Current is null) return;
 
@@ -52,11 +55,14 @@ public class AuthHeaderHandler(IAuthTokenStore tokenStore) : DelegatingHandler
 
                 await Shell.Current.GoToAsync("//LoginPage");
                 await Shell.Current.DisplayAlertAsync("Sesión expirada", "Tu sesión terminó. Inicia sesión de nuevo.", "OK");
-            });
-        }
-        finally
-        {
-            Interlocked.Exchange(ref _redirigiendoALogin, 0);
-        }
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _redirigiendoALogin, 0);
+            }
+        });
     }
 }

@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BarraApp.Mobile.ViewModels.Producto"
+             x:Class="BarraApp.Mobile.Views.Producto.ProductoDetallePage"
+             x:DataType="vm:ProductoDetalleViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource AppBg}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,25,20,40"
+                             Spacing="16"
+                             MaximumWidthRequest="520"
+                             HorizontalOptions="Center">
+
+            <!-- Barra superior: volver + favorito -->
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                <Border BackgroundColor="{StaticResource AppCard}"
+                        Stroke="{StaticResource AppBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        HeightRequest="40"
+                        WidthRequest="40">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding VolverCommand}" />
+                    </Border.GestureRecognizers>
+                    <Path Data="M15 19l-7-7 7-7"
+                          Stroke="{StaticResource AppText}"
+                          StrokeThickness="2"
+                          StrokeLineCap="Round"
+                          WidthRequest="18"
+                          HeightRequest="18"
+                          HorizontalOptions="Center"
+                          VerticalOptions="Center" />
+                </Border>
+
+                <Label Grid.Column="1"
+                       Text="Producto"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       VerticalOptions="Center"
+                       Margin="15,0,0,0" />
+
+                <Button Grid.Column="2"
+                        Text="✏️"
+                        FontSize="20"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource AppSubtext}"
+                        WidthRequest="48"
+                        HeightRequest="48"
+                        MinimumHeightRequest="48"
+                        Padding="0"
+                        IsVisible="{Binding MostrarContenido}"
+                        Command="{Binding EditarCommand}" />
+
+                <Button Grid.Column="3"
+                        Text="♡"
+                        FontSize="26"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource AppSubtext}"
+                        WidthRequest="48"
+                        HeightRequest="48"
+                        MinimumHeightRequest="48"
+                        Padding="0"
+                        IsVisible="{Binding MostrarContenido}"
+                        Command="{Binding AlternarFavoritoCommand}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding EsFavorito}" Value="True">
+                            <Setter Property="Text" Value="♥" />
+                            <Setter Property="TextColor" Value="#EF4444" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+            </Grid>
+
+            <ActivityIndicator IsRunning="{Binding EstaCargando}"
+                               IsVisible="{Binding EstaCargando}"
+                               HeightRequest="40"
+                               HorizontalOptions="Center"
+                               Margin="0,30,0,0" />
+
+            <!-- Error al cargar el producto -->
+            <VerticalStackLayout Spacing="10" Margin="0,40,0,0" IsVisible="{Binding HayErrorCarga}">
+                <Label Text="😕" FontSize="46" HorizontalOptions="Center" />
+                <Label Text="No pudimos cargar el producto"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center" />
+                <Label Text="{Binding ErrorCarga}"
+                       TextColor="{StaticResource AppSubtext}"
+                       HorizontalTextAlignment="Center"
+                       HorizontalOptions="Center" />
+                <Button Text="Reintentar"
+                        Command="{Binding ReintentarCommand}"
+                        HorizontalOptions="Center"
+                        Margin="0,10,0,0" />
+            </VerticalStackLayout>
+
+            <!-- Contenido -->
+            <VerticalStackLayout Spacing="16" IsVisible="{Binding MostrarContenido}">
+
+                <!-- Ficha del producto -->
+                <Border BackgroundColor="{StaticResource AppCard}"
+                        Stroke="{StaticResource AppBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 22"
+                        Padding="18">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                            <Border WidthRequest="64"
+                                    HeightRequest="64"
+                                    StrokeShape="RoundRectangle 32"
+                                    StrokeThickness="0"
+                                    BackgroundColor="{StaticResource AppYellow}"
+                                    VerticalOptions="Center">
+                                <Label Text="{Binding Inicial}"
+                                       TextColor="{StaticResource Black}"
+                                       FontSize="28"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+
+                            <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                <Label Text="{Binding Nombre}" FontSize="20" FontAttributes="Bold" LineBreakMode="WordWrap" />
+                                <Label Text="{Binding Marca}" TextColor="{StaticResource AppSubtext}" FontSize="14" />
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Border BackgroundColor="#1F1B05"
+                                    Stroke="{StaticResource PrimaryBrush}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="10,4"
+                                    IsVisible="{Binding TieneCategoria}">
+                                <Label Text="{Binding Categoria}" TextColor="{StaticResource AppYellow}" FontSize="12" />
+                            </Border>
+                            <Border BackgroundColor="{StaticResource Gray800}"
+                                    Stroke="{StaticResource AppBorder}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="10,4"
+                                    IsVisible="{Binding TieneUnidad}">
+                                <Label Text="{Binding Unidad}" TextColor="{StaticResource AppSubtext}" FontSize="12" />
+                            </Border>
+                        </HorizontalStackLayout>
+
+                        <Label Text="{Binding Descripcion}"
+                               TextColor="{StaticResource AppSubtext}"
+                               FontSize="13"
+                               LineBreakMode="WordWrap"
+                               IsVisible="{Binding TieneDescripcion}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Avisos -->
+                <Border BackgroundColor="#2A1212"
+                        Stroke="#EF4444"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 16"
+                        Padding="14"
+                        IsVisible="{Binding HasError}">
+                    <Label Text="{Binding MensajeError}" TextColor="#EF4444" FontSize="13" LineBreakMode="WordWrap" />
+                </Border>
+
+                <Border BackgroundColor="#0E2316"
+                        Stroke="#10B981"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 16"
+                        Padding="14"
+                        IsVisible="{Binding HasSuccess}">
+                    <Label Text="{Binding MensajeExito}" TextColor="#10B981" FontSize="13" LineBreakMode="WordWrap" />
+                </Border>
+
+                <!-- Mejor precio -->
+                <Border BackgroundColor="#1F1B05"
+                        Stroke="{StaticResource PrimaryBrush}"
+                        StrokeThickness="1.5"
+                        StrokeShape="RoundRectangle 22"
+                        Padding="18"
+                        IsVisible="{Binding TienePrecios}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="MEJOR PRECIO" TextColor="{StaticResource AppYellow}" FontSize="12" FontAttributes="Bold" />
+                        <Label Text="{Binding MejorPrecioTexto}" FontSize="34" FontAttributes="Bold" TextColor="{StaticResource AppYellow}" />
+                        <Label Text="{Binding MejorComercioTexto}" FontSize="15" />
+                        <Label Text="{Binding MejorAhorroTexto}"
+                               TextColor="#10B981"
+                               FontSize="13"
+                               IsVisible="{Binding TieneAhorroMejor}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Sin precios -->
+                <Border BackgroundColor="{StaticResource AppCard}"
+                        Stroke="{StaticResource AppBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 22"
+                        Padding="18"
+                        IsVisible="{Binding SinPrecios}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Aún no hay precios" FontSize="17" FontAttributes="Bold" HorizontalOptions="Center" />
+                        <Label Text="Sé el primero en reportar cuánto cuesta este producto y ayuda a los demás a ahorrar."
+                               TextColor="{StaticResource AppSubtext}"
+                               HorizontalTextAlignment="Center"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Comparacion -->
+                <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding TienePrecios}">
+                    <Label Text="{Binding TituloPrecios}"
+                           TextColor="{StaticResource Gray400}"
+                           FontSize="12"
+                           FontAttributes="Bold"
+                           VerticalOptions="Center" />
+                    <Label Grid.Column="1"
+                           Text="📍 Ver distancias"
+                           TextColor="{StaticResource AppYellow}"
+                           FontSize="13"
+                           FontAttributes="Bold"
+                           IsVisible="{Binding PuedeVerDistancias}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding VerDistanciasCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Precios}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:PrecioItemViewModel">
+                            <Border BackgroundColor="{StaticResource AppCard}"
+                                    Stroke="{StaticResource AppBorder}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 18"
+                                    Padding="14">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding EsMejor}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource PrimaryBrush}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding Comercio}" FontSize="16" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding Detalle}"
+                                               TextColor="{StaticResource AppSubtext}"
+                                               FontSize="12"
+                                               LineBreakMode="TailTruncation"
+                                               IsVisible="{Binding TieneDetalle}" />
+                                        <Label Text="{Binding Distancia}"
+                                               TextColor="{StaticResource AppYellow}"
+                                               FontSize="12"
+                                               IsVisible="{Binding TieneDistancia}" />
+                                        <Label Text="{Binding Actualizado}"
+                                               TextColor="{StaticResource Gray500}"
+                                               FontSize="11" />
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Column="1" Spacing="4" HorizontalOptions="End" VerticalOptions="Center">
+                                        <Label Text="{Binding PrecioTexto}"
+                                               FontSize="20"
+                                               FontAttributes="Bold"
+                                               HorizontalOptions="End" />
+                                        <Border BackgroundColor="{StaticResource AppYellow}"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 10"
+                                                Padding="8,2"
+                                                HorizontalOptions="End"
+                                                IsVisible="{Binding EsMejor}">
+                                            <Label Text="Más barato" TextColor="{StaticResource Black}" FontSize="10" FontAttributes="Bold" />
+                                        </Border>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Acciones -->
+                <Button Text="Agregar a una lista"
+                        Command="{Binding AgregarAListaCommand}"
+                        Margin="0,6,0,0" />
+
+                <Button Text="Reportar un precio"
+                        Command="{Binding ReportarPrecioCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource AppYellow}"
+                        BorderColor="{StaticResource AppYellow}"
+                        BorderWidth="1.5" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

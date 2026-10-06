@@ -4,8 +4,13 @@ using System.Threading.Tasks;
 using BarraApp.Mobile.Services.Api;
 using BarraApp.Mobile.Services.Historial;
 using BarraApp.Mobile.Services.Sesion;
+using BarraApp.Mobile.Views.Comercio;
+using BarraApp.Mobile.Views.Favorito;
 using BarraApp.Mobile.Views.Guild;
+using BarraApp.Mobile.Views.Historial;
 using BarraApp.Mobile.Views.ListaCompra;
+using BarraApp.Mobile.Views.Pago;
+using BarraApp.Mobile.Views.Producto;
 using BarraApp.Mobile.Views.Usuario;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -53,9 +58,11 @@ public partial class DashboardViewModel : ObservableObject
                 NombreUsuario = res.usuario.nombre;
             }
         }
-        catch (ApiException)
+        catch (Exception)
         {
             // Si falla se deja el nombre por defecto; el mensaje de sesion expirada ya lo maneja AuthHeaderHandler.
+            // Se atrapa todo (no solo ApiException): este comando se lanza sin await desde OnAppearing y una
+            // excepcion sin atrapar cierra la app.
         }
     }
 
@@ -96,6 +103,36 @@ public partial class DashboardViewModel : ObservableObject
         if (opcion == "Perfil")
         {
             await Shell.Current.GoToAsync(nameof(PerfilPage));
+            return;
+        }
+
+        if (opcion == "Favoritos")
+        {
+            await Shell.Current.GoToAsync(nameof(FavoritosPage));
+            return;
+        }
+
+        if (opcion == "Historial")
+        {
+            await Shell.Current.GoToAsync(nameof(HistorialPage));
+            return;
+        }
+
+        if (opcion == "Comercios")
+        {
+            await Shell.Current.GoToAsync(nameof(ComerciosPage));
+            return;
+        }
+
+        if (opcion == "Pagos")
+        {
+            await Shell.Current.GoToAsync(nameof(PagoPage));
+            return;
+        }
+
+        if (opcion == "RegistrarProducto")
+        {
+            await Shell.Current.GoToAsync(nameof(ProductoFormPage));
             return;
         }
 
@@ -171,13 +208,18 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task EscanearAsync()
     {
-        await Shell.Current.DisplayAlert("Escáner", "Abriendo cámara (Módulo 2)...", "OK");
+        await Shell.Current.GoToAsync(nameof(ScannerPage));
     }
 
     [RelayCommand]
-    private async Task BuscarTextoAsync(string texto)
+    private async Task BuscarTextoAsync(string? texto)
     {
-        if (string.IsNullOrWhiteSpace(texto)) return;
-        await Shell.Current.DisplayAlert("Búsqueda", $"Buscando: {texto}", "OK");
+        // Con texto abre la busqueda ya ejecutada; sin texto (o desde una busqueda reciente que solo
+        // tiene producto) abre el buscador vacio.
+        string ruta = string.IsNullOrWhiteSpace(texto)
+            ? nameof(BusquedaPage)
+            : $"{nameof(BusquedaPage)}?texto={Uri.EscapeDataString(texto.Trim())}";
+
+        await Shell.Current.GoToAsync(ruta);
     }
 }

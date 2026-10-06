@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:BarraApp.Mobile.ViewModels.Dashboard"
@@ -295,29 +295,37 @@
                 <!-- Opciones Secundarias -->
                 <VerticalStackLayout Spacing="5" Padding="10,0">
                     <!-- Mi Perfil -->
-                    <Button Text="Mi Perfil" ImageSource="{FontImage FontFamily=FAS, Glyph='👤', Color={StaticResource AppText}, Size=20}"
+                    <Button Text="👤  Mi Perfil"
                             Command="{Binding OpcionMenuCommand}" CommandParameter="Perfil" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
 
                     <!-- Mis Favoritos -->
-                    <Button Text="Mis Favoritos" ImageSource="{FontImage FontFamily=FAS, Glyph='❤️', Color={StaticResource AppText}, Size=20}"
+                    <Button Text="❤️  Mis Favoritos"
                             Command="{Binding OpcionMenuCommand}" CommandParameter="Favoritos" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
 
                     <!-- Historial Completo -->
-                    <Button Text="Historial Completo" ImageSource="{FontImage FontFamily=FAS, Glyph='🕒', Color={StaticResource AppText}, Size=20}"
+                    <Button Text="🕒  Historial Completo"
                             Command="{Binding OpcionMenuCommand}" CommandParameter="Historial" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
 
+                    <!-- Comercios cercanos -->
+                    <Button Text="📍  Comercios cercanos"
+                            Command="{Binding OpcionMenuCommand}" CommandParameter="Comercios" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+
+                    <!-- Registrar producto -->
+                    <Button Text="➕  Registrar producto"
+                            Command="{Binding OpcionMenuCommand}" CommandParameter="RegistrarProducto" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+
                     <!-- Pagos / Suscripción -->
-                    <Button Text="Suscripción / Pagos" ImageSource="{FontImage FontFamily=FAS, Glyph='💳', Color={StaticResource AppText}, Size=20}"
+                    <Button Text="💳  Suscripción / Pagos"
                             Command="{Binding OpcionMenuCommand}" CommandParameter="Pagos" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
 
                     <BoxView HeightRequest="1" Color="{StaticResource AppBorder}" Margin="15,10"/>
 
                     <!-- Configuración -->
-                    <Button Text="Configuración" ImageSource="{FontImage FontFamily=FAS, Glyph='⚙️', Color={StaticResource AppText}, Size=20}"
+                    <Button Text="⚙️  Configuración"
                             Command="{Binding OpcionMenuCommand}" CommandParameter="Configuracion" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
 
                     <!-- Cerrar Sesión -->
-                    <Button Text="Cerrar Sesión" ImageSource="{FontImage FontFamily=FAS, Glyph='🚪', Color={StaticResource AppText}, Size=20}"
+                    <Button Text="🚪  Cerrar Sesión"
                             Command="{Binding OpcionMenuCommand}" CommandParameter="CerrarSesion" BackgroundColor="Transparent" TextColor="#EF4444" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
                 </VerticalStackLayout>
 

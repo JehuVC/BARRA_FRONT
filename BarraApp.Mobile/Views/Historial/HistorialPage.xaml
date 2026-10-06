@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BarraApp.Mobile.ViewModels.Historial"
+             x:Class="BarraApp.Mobile.Views.Historial.HistorialPage"
+             x:DataType="vm:HistorialViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource AppBg}">
+
+    <Grid RowDefinitions="Auto,Auto,*"
+          RowSpacing="12"
+          Padding="20,25,20,0"
+          MaximumWidthRequest="520"
+          HorizontalOptions="Center">
+
+        <!-- 0. Barra superior -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+            <Border BackgroundColor="{StaticResource AppCard}"
+                    Stroke="{StaticResource AppBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 20"
+                    HeightRequest="40"
+                    WidthRequest="40">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding VolverCommand}" />
+                </Border.GestureRecognizers>
+                <Path Data="M15 19l-7-7 7-7"
+                      Stroke="{StaticResource AppText}"
+                      StrokeThickness="2"
+                      StrokeLineCap="Round"
+                      WidthRequest="18"
+                      HeightRequest="18"
+                      HorizontalOptions="Center"
+                      VerticalOptions="Center" />
+            </Border>
+
+            <Label Grid.Column="1"
+                   Text="Historial"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   VerticalOptions="Center"
+                   Margin="15,0,0,0" />
+
+            <Label Grid.Column="2"
+                   Text="{Binding Resumen}"
+                   TextColor="{StaticResource AppSubtext}"
+                   FontSize="13"
+                   VerticalOptions="Center"
+                   IsVisible="{Binding HayHistorial}" />
+        </Grid>
+
+        <!-- 1. Avisos -->
+        <Border Grid.Row="1"
+                BackgroundColor="#2A1212"
+                Stroke="#EF4444"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 16"
+                Padding="14"
+                IsVisible="{Binding HasError}">
+            <Label Text="{Binding MensajeError}" TextColor="#EF4444" FontSize="13" LineBreakMode="WordWrap" />
+        </Border>
+
+        <!-- 2. Lista agrupada por dia -->
+        <Grid Grid.Row="2">
+
+            <RefreshView IsRefreshing="{Binding Cargando, Mode=TwoWay}"
+                         Command="{Binding CargarCommand}"
+                         RefreshColor="{StaticResource AppYellow}">
+                <CollectionView ItemsSource="{Binding Grupos}"
+                                IsGrouped="True"
+                                SelectionMode="None"
+                                VerticalScrollBarVisibility="Never">
+                    <CollectionView.GroupHeaderTemplate>
+                        <DataTemplate x:DataType="vm:GrupoHistorial">
+                            <Label Text="{Binding Titulo}"
+                                   TextColor="{StaticResource Gray400}"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   Margin="0,10,0,8" />
+                        </DataTemplate>
+                    </CollectionView.GroupHeaderTemplate>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:HistorialItemViewModel">
+                            <Border Margin="0,0,0,8"
+                                    BackgroundColor="{StaticResource AppCard}"
+                                    Stroke="{StaticResource AppBorder}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 16"
+                                    Padding="14,12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HistorialViewModel}}, Path=AbrirCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Border BackgroundColor="{StaticResource Gray800}"
+                                            StrokeShape="RoundRectangle 20"
+                                            StrokeThickness="0"
+                                            WidthRequest="40"
+                                            HeightRequest="40"
+                                            VerticalOptions="Center">
+                                        <Label Text="{Binding Icono}"
+                                               FontSize="18"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center" />
+                                    </Border>
+
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                        <Label Text="{Binding Texto}"
+                                               FontSize="15"
+                                               FontAttributes="Bold"
+                                               MaxLines="2"
+                                               LineBreakMode="TailTruncation" />
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Label Text="{Binding Tipo}"
+                                                   TextColor="{StaticResource AppSubtext}"
+                                                   FontSize="12" />
+                                            <Label Text="{Binding VecesTexto}"
+                                                   TextColor="{StaticResource AppYellow}"
+                                                   FontSize="12"
+                                                   IsVisible="{Binding TieneVeces}" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+
+                                    <Label Grid.Column="2"
+                                           Text="{Binding Cuando}"
+                                           TextColor="{StaticResource Gray500}"
+                                           FontSize="12"
+                                           VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                    <CollectionView.Footer>
+                        <Label Text="Se muestran tus búsquedas más recientes."
+                               TextColor="{StaticResource Gray500}"
+                               FontSize="11"
+                               HorizontalOptions="Center"
+                               Margin="0,10,0,30" />
+                    </CollectionView.Footer>
+                </CollectionView>
+            </RefreshView>
+
+            <!-- Sin historial -->
+            <VerticalStackLayout VerticalOptions="Center" Spacing="8" Margin="0,0,0,60" IsVisible="{Binding SinHistorial}">
+                <Label Text="🕒" FontSize="48" HorizontalOptions="Center" />
+                <Label Text="Aún no has buscado nada"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center" />
+                <Label Text="Tus búsquedas y los productos que veas aparecerán aquí para volver a ellos rápido."
+                       TextColor="{StaticResource AppSubtext}"
+                       HorizontalTextAlignment="Center"
+                       HorizontalOptions="Center" />
+                <Button Text="Buscar productos"
+                        Command="{Binding BuscarProductosCommand}"
+                        HorizontalOptions="Center"
+                        Margin="0,12,0,0" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>

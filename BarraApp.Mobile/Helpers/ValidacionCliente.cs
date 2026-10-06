@@ -10,6 +10,15 @@ public static class ValidacionCliente
     public const string ReglasPassword =
         "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.";
 
+    // Codigo de barras leido por la camara o escrito a mano: sin espacios a los lados, no vacio, max 50 (el tamano de la
+    // columna) y sin espacios adentro. Devuelve null si no sirve.
+    public static string? NormalizarCodigoBarras(string? codigo)
+    {
+        string c = (codigo ?? string.Empty).Trim();
+        if (c.Length == 0 || c.Length > 50 || c.Any(char.IsWhiteSpace)) return null;
+        return c;
+    }
+
     public static bool EsEmailValido(string? email) =>
         !string.IsNullOrWhiteSpace(email)
         && email.Trim().Length <= 100

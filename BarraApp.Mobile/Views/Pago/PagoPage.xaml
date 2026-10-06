@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BarraApp.Mobile.ViewModels.Pago"
+             x:Class="BarraApp.Mobile.Views.Pago.PagoPage"
+             x:DataType="vm:PagoViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource AppBg}">
+
+    <Grid RowDefinitions="Auto,*" RowSpacing="12" Padding="20,25,20,0">
+
+        <!-- Barra superior -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*">
+            <Border BackgroundColor="{StaticResource AppCard}"
+                    Stroke="{StaticResource AppBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 20"
+                    HeightRequest="40"
+                    WidthRequest="40">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding VolverCommand}" />
+                </Border.GestureRecognizers>
+                <Path Data="M15 19l-7-7 7-7"
+                      Stroke="{StaticResource AppText}"
+                      StrokeThickness="2"
+                      StrokeLineCap="Round"
+                      WidthRequest="18"
+                      HeightRequest="18"
+                      HorizontalOptions="Center"
+                      VerticalOptions="Center" />
+            </Border>
+
+            <Label Grid.Column="1"
+                   Text="Suscripción y pagos"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   VerticalOptions="Center"
+                   Margin="15,0,0,0" />
+        </Grid>
+
+        <!-- 1. Planes -->
+        <ScrollView Grid.Row="1" IsVisible="{Binding MostrarPlanes}">
+            <VerticalStackLayout Spacing="16"
+                                 Padding="0,4,0,40"
+                                 MaximumWidthRequest="520"
+                                 HorizontalOptions="Center">
+
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="💳" FontSize="40" HorizontalOptions="Center" />
+                    <Label Text="Elige tu plan"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center" />
+                    <Label Text="Pagas con tarjeta en una ventana segura de Tilopay. Nosotros nunca vemos los datos de tu tarjeta."
+                           TextColor="{StaticResource AppSubtext}"
+                           FontSize="13"
+                           HorizontalTextAlignment="Center"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+
+                <!-- Modo de pruebas -->
+                <Border BackgroundColor="#2A2410"
+                        Stroke="{StaticResource AppYellow}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 16"
+                        Padding="14"
+                        IsVisible="{Binding EsModoPruebas}">
+                    <Label Text="Modo de pruebas: no se cobra dinero real. Usa las tarjetas de prueba de Tilopay."
+                           TextColor="{StaticResource AppYellow}"
+                           FontSize="12"
+                           LineBreakMode="WordWrap" />
+                </Border>
+
+                <!-- Pago a medias -->
+                <Border BackgroundColor="{StaticResource AppCard}"
+                        Stroke="{StaticResource AppYellow}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="16"
+                        IsVisible="{Binding HayPendiente}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="⏳ Tienes un pago sin terminar"
+                               FontAttributes="Bold" />
+                        <Label Text="Si ya pagaste, verifica el resultado. Si no, puedes continuar donde lo dejaste."
+                               TextColor="{StaticResource AppSubtext}"
+                               FontSize="13"
+                               LineBreakMode="WordWrap" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <Button Text="Verificar"
+                                    Command="{Binding VerificarCommand}"
+                                    IsEnabled="{Binding PuedeInteractuar}" />
+                            <Button Grid.Column="1"
+                                    Text="Continuar"
+                                    Command="{Binding ContinuarPendienteCommand}"
+                                    IsEnabled="{Binding PuedeInteractuar}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{StaticResource AppYellow}"
+                                    BorderColor="{StaticResource AppYellow}"
+                                    BorderWidth="1.5" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Planes -->
+                <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding Planes}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:PlanPago">
+                            <Border BackgroundColor="{StaticResource AppCard}"
+                                    Stroke="{StaticResource AppBorder}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 20"
+                                    Padding="18">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding Destacado}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource AppYellow}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <VerticalStackLayout Spacing="8">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Nombre}" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" />
+                                        <Border Grid.Column="1"
+                                                BackgroundColor="{StaticResource AppYellow}"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 10"
+                                                Padding="8,2"
+                                                IsVisible="{Binding Destacado}">
+                                            <Label Text="Mejor precio" TextColor="{StaticResource Black}" FontSize="10" FontAttributes="Bold" />
+                                        </Border>
+                                    </Grid>
+                                    <Label Text="{Binding PrecioTexto}"
+                                           FontSize="26"
+                                           FontAttributes="Bold"
+                                           TextColor="{StaticResource AppYellow}" />
+                                    <Label Text="{Binding Descripcion}"
+                                           TextColor="{StaticResource AppSubtext}"
+                                           FontSize="13"
+                                           LineBreakMode="WordWrap" />
+                                    <Button Text="Pagar este plan"
+                                            Margin="0,6,0,0"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PagoViewModel}}, Path=ElegirPlanCommand}"
+                                            CommandParameter="{Binding .}"
+                                            IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type vm:PagoViewModel}}, Path=PuedeInteractuar}" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Border BackgroundColor="#2A1212"
+                        Stroke="#EF4444"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 16"
+                        Padding="14"
+                        IsVisible="{Binding HasError}">
+                    <Label Text="{Binding MensajeError}" TextColor="#EF4444" FontSize="13" LineBreakMode="WordWrap" />
+                </Border>
+
+                <ActivityIndicator IsRunning="{Binding Procesando}"
+                                   IsVisible="{Binding Procesando}"
+                                   HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- 2. Checkout -->
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto,*,Auto"
+              RowSpacing="10"
+              Padding="0,0,0,16"
+              IsVisible="{Binding MostrarCheckout}">
+
+            <Label Text="Completa el pago aquí. Cuando termines, te avisaremos el resultado."
+                   TextColor="{StaticResource AppSubtext}"
+                   FontSize="12"
+                   LineBreakMode="WordWrap" />
+
+            <Border Grid.Row="1"
+                    Stroke="{StaticResource AppBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16">
+                <WebView Source="{Binding UrlCheckout}" />
+            </Border>
+
+            <VerticalStackLayout Grid.Row="2" Spacing="10">
+                <Label Text="{Binding AvisoCheckout}"
+                       TextColor="{StaticResource AppYellow}"
+                       FontSize="12"
+                       LineBreakMode="WordWrap"
+                       IsVisible="{Binding HayAvisoCheckout}" />
+
+                <Border BackgroundColor="#2A1212"
+                        Stroke="#EF4444"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 16"
+                        Padding="12"
+                        IsVisible="{Binding HasError}">
+                    <Label Text="{Binding MensajeError}" TextColor="#EF4444" FontSize="13" LineBreakMode="WordWrap" />
+                </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Button Text="Ya pagué, verificar"
+                            Command="{Binding VerificarCommand}"
+                            IsEnabled="{Binding PuedeInteractuar}" />
+                    <Button Grid.Column="1"
+                            Text="Abrir en el navegador"
+                            Command="{Binding AbrirEnNavegadorCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="{StaticResource AppYellow}"
+                            BorderColor="{StaticResource AppYellow}"
+                            BorderWidth="1.5" />
+                </Grid>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- 3. Resultado -->
+        <VerticalStackLayout Grid.Row="1"
+                             VerticalOptions="Center"
+                             Spacing="12"
+                             Padding="0,0,0,60"
+                             MaximumWidthRequest="520"
+                             IsVisible="{Binding MostrarResultado}">
+            <Label Text="{Binding ResultadoIcono}" FontSize="64" HorizontalOptions="Center" />
+            <Label Text="{Binding ResultadoTitulo}"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+            <Label Text="{Binding ResultadoMensaje}"
+                   TextColor="{StaticResource AppSubtext}"
+                   HorizontalTextAlignment="Center"
+                   LineBreakMode="WordWrap" />
+            <Label Text="{Binding ResultadoDetalle}"
+                   TextColor="{StaticResource AppSubtext}"
+                   FontSize="12"
+                   HorizontalOptions="Center" />
+
+            <Border BackgroundColor="#2A1212"
+                    Stroke="#EF4444"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="12"
+                    IsVisible="{Binding HasError}">
+                <Label Text="{Binding MensajeError}" TextColor="#EF4444" FontSize="13" LineBreakMode="WordWrap" />
+            </Border>
+
+            <Button Text="Listo"
+                    Command="{Binding VolverCommand}"
+                    Margin="0,12,0,0" />
+            <Button Text="Intentar de nuevo"
+                    Command="{Binding NuevoIntentoCommand}"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource AppYellow}"
+                    BorderColor="{StaticResource AppYellow}"
+                    BorderWidth="1.5">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding ResultadoExitoso}" Value="True">
+                        <Setter Property="IsVisible" Value="False" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

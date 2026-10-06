@@ -82,12 +82,33 @@ public partial class LoginViewModel(ISesionService sesionService, IAuthTokenStor
             var token = await tokenStore.ObtenerTokenAsync();
             if (!string.IsNullOrWhiteSpace(token))
             {
-                await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
+                await IrAlDashboardCuandoShellEsteListoAsync();
             }
         }
         catch (Exception)
         {
             // SecureStorage puede fallar (ej. cambio de bloqueo del dispositivo): se pide login normal.
+        }
+    }
+
+    // En Windows OnAppearing de la primera pagina corre mientras el Shell todavia se esta armando; navegar en ese
+    // momento hace que el propio Shell lance "Pending Navigations still processing" (una excepcion interna que no
+    // se puede atrapar y cierra la app). Por eso se espera un poco y, si el Shell aun esta ocupado, se reintenta.
+    private static async Task IrAlDashboardCuandoShellEsteListoAsync()
+    {
+        await Task.Delay(300);
+
+        for (int intento = 0; intento < 5; intento++)
+        {
+            try
+            {
+                await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
+                return;
+            }
+            catch (InvalidOperationException)
+            {
+                await Task.Delay(300);
+            }
         }
     }
 

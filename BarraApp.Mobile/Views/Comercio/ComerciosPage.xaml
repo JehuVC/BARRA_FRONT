@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BarraApp.Mobile.ViewModels.Comercio"
+             x:Class="BarraApp.Mobile.Views.Comercio.ComerciosPage"
+             x:DataType="vm:ComerciosViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource AppBg}">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*"
+          RowSpacing="12"
+          Padding="20,25,20,0"
+          MaximumWidthRequest="520"
+          HorizontalOptions="Center">
+
+        <!-- 0. Barra superior: volver + titulo + nuevo comercio -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+            <Border BackgroundColor="{StaticResource AppCard}"
+                    Stroke="{StaticResource AppBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 20"
+                    HeightRequest="40"
+                    WidthRequest="40">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding VolverCommand}" />
+                </Border.GestureRecognizers>
+                <Path Data="M15 19l-7-7 7-7"
+                      Stroke="{StaticResource AppText}"
+                      StrokeThickness="2"
+                      StrokeLineCap="Round"
+                      WidthRequest="18"
+                      HeightRequest="18"
+                      HorizontalOptions="Center"
+                      VerticalOptions="Center" />
+            </Border>
+
+            <Label Grid.Column="1"
+                   Text="Comercios cercanos"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   VerticalOptions="Center"
+                   Margin="15,0,0,0" />
+
+            <Button Grid.Column="2"
+                    Text="+"
+                    FontSize="24"
+                    WidthRequest="44"
+                    HeightRequest="44"
+                    MinimumHeightRequest="44"
+                    Padding="0"
+                    CornerRadius="12"
+                    Command="{Binding NuevoComercioCommand}" />
+        </Grid>
+
+        <!-- 1. Radio de busqueda -->
+        <ScrollView Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Radios}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:RadioChipViewModel">
+                        <Border BackgroundColor="{StaticResource AppCard}"
+                                Stroke="{StaticResource AppBorder}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 18"
+                                Padding="14,8">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding Seleccionado}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource AppYellow}" />
+                                    <Setter Property="Stroke" Value="{StaticResource PrimaryBrush}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ComerciosViewModel}}, Path=SeleccionarRadioCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="{Binding Texto}" FontSize="13" FontAttributes="Bold">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Seleccionado}" Value="True">
+                                        <Setter Property="TextColor" Value="{StaticResource Black}" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- 2. Resumen y errores -->
+        <VerticalStackLayout Grid.Row="2" Spacing="8">
+            <Border BackgroundColor="#2A1212"
+                    Stroke="#EF4444"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="14"
+                    IsVisible="{Binding HasError}">
+                <Label Text="{Binding MensajeError}" TextColor="#EF4444" FontSize="13" LineBreakMode="WordWrap" />
+            </Border>
+
+            <Label Text="{Binding Resumen}"
+                   TextColor="{StaticResource Gray400}"
+                   FontSize="12"
+                   FontAttributes="Bold"
+                   IsVisible="{Binding HayComercios}" />
+        </VerticalStackLayout>
+
+        <!-- 3. Lista y estados -->
+        <Grid Grid.Row="3">
+
+            <RefreshView IsRefreshing="{Binding Cargando, Mode=TwoWay}"
+                         Command="{Binding CargarCommand}"
+                         RefreshColor="{StaticResource AppYellow}">
+                <CollectionView ItemsSource="{Binding Comercios}"
+                                SelectionMode="None"
+                                VerticalScrollBarVisibility="Never">
+                    <CollectionView.Footer>
+                        <BoxView HeightRequest="30" Color="Transparent" />
+                    </CollectionView.Footer>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ComercioItemViewModel">
+                            <Border Margin="0,0,0,10"
+                                    BackgroundColor="{StaticResource AppCard}"
+                                    Stroke="{StaticResource AppBorder}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 18"
+                                    Padding="14">
+                                <VerticalStackLayout Spacing="12">
+
+                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                        <Border BackgroundColor="{StaticResource Gray800}"
+                                                StrokeShape="RoundRectangle 23"
+                                                StrokeThickness="0"
+                                                WidthRequest="46"
+                                                HeightRequest="46"
+                                                VerticalOptions="Start">
+                                            <Label Text="🏪" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center" />
+                                        </Border>
+
+                                        <VerticalStackLayout Grid.Column="1" Spacing="3">
+                                            <Label Text="{Binding Nombre}" FontSize="16" FontAttributes="Bold" MaxLines="2" LineBreakMode="TailTruncation" />
+                                            <Label Text="{Binding Cadena}"
+                                                   TextColor="{StaticResource AppYellow}"
+                                                   FontSize="12"
+                                                   IsVisible="{Binding TieneCadena}" />
+                                            <Label Text="{Binding Direccion}"
+                                                   TextColor="{StaticResource AppSubtext}"
+                                                   FontSize="12"
+                                                   MaxLines="2"
+                                                   LineBreakMode="TailTruncation"
+                                                   IsVisible="{Binding TieneDireccion}" />
+                                            <Label Text="{Binding Horario}"
+                                                   TextColor="{StaticResource Gray500}"
+                                                   FontSize="11"
+                                                   MaxLines="1"
+                                                   LineBreakMode="TailTruncation"
+                                                   IsVisible="{Binding TieneHorario}" />
+                                            <Label Text="{Binding Telefono}"
+                                                   TextColor="{StaticResource Gray500}"
+                                                   FontSize="11"
+                                                   IsVisible="{Binding TieneTelefono}">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ComerciosViewModel}}, Path=LlamarCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </VerticalStackLayout>
+
+                                        <Label Grid.Column="2"
+                                               Text="{Binding Distancia}"
+                                               TextColor="{StaticResource AppYellow}"
+                                               FontSize="13"
+                                               FontAttributes="Bold"
+                                               VerticalOptions="Start"
+                                               IsVisible="{Binding TieneDistancia}" />
+                                    </Grid>
+
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                        <Button Text="📍 Cómo llegar"
+                                                FontSize="13"
+                                                HeightRequest="40"
+                                                MinimumHeightRequest="40"
+                                                CornerRadius="12"
+                                                Padding="8,0"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ComerciosViewModel}}, Path=AbrirMapaCommand}"
+                                                CommandParameter="{Binding .}" />
+                                        <Button Grid.Column="1"
+                                                Text="✏️ Editar"
+                                                FontSize="13"
+                                                HeightRequest="40"
+                                                MinimumHeightRequest="40"
+                                                CornerRadius="12"
+                                                Padding="8,0"
+                                                BackgroundColor="Transparent"
+                                                TextColor="{StaticResource AppYellow}"
+                                                BorderColor="{StaticResource AppYellow}"
+                                                BorderWidth="1.5"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ComerciosViewModel}}, Path=EditarCommand}"
+                                                CommandParameter="{Binding .}" />
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+
+            <!-- Sin ubicacion -->
+            <VerticalStackLayout VerticalOptions="Center" Spacing="8" Margin="0,0,0,60" IsVisible="{Binding SinUbicacion}">
+                <Label Text="📍" FontSize="48" HorizontalOptions="Center" />
+                <Label Text="Activa tu ubicación"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center" />
+                <Label Text="La necesitamos para mostrarte los comercios que tienes cerca. Solo se usa mientras la app está abierta."
+                       TextColor="{StaticResource AppSubtext}"
+                       HorizontalTextAlignment="Center"
+                       HorizontalOptions="Center" />
+                <Button Text="Activar ubicación"
+                        Command="{Binding ActivarUbicacionCommand}"
+                        HorizontalOptions="Center"
+                        Margin="0,12,0,0" />
+            </VerticalStackLayout>
+
+            <!-- Sin resultados -->
+            <VerticalStackLayout VerticalOptions="Center" Spacing="8" Margin="0,0,0,60" IsVisible="{Binding SinResultados}">
+                <Label Text="🏪" FontSize="48" HorizontalOptions="Center" />
+                <Label Text="No hay comercios por aquí"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center" />
+                <Label Text="Prueba con un radio más grande o registra el comercio donde estás."
+                       TextColor="{StaticResource AppSubtext}"
+                       HorizontalTextAlignment="Center"
+                       HorizontalOptions="Center" />
+                <Button Text="Ampliar el radio"
+                        Command="{Binding AmpliarRadioCommand}"
+                        IsVisible="{Binding PuedeAmpliar}"
+                        HorizontalOptions="Center"
+                        Margin="0,12,0,0" />
+                <Button Text="Registrar un comercio"
+                        Command="{Binding NuevoComercioCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource AppYellow}"
+                        BorderColor="{StaticResource AppYellow}"
+                        BorderWidth="1.5"
+                        HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BarraApp.Mobile.ViewModels.Producto"
+             xmlns:controls="clr-namespace:BarraApp.Mobile.Controls"
+             x:Class="BarraApp.Mobile.Views.Producto.ProductoFormPage"
+             x:DataType="vm:ProductoFormViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource AppBg}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,25,20,40"
+                             Spacing="16"
+                             MaximumWidthRequest="520"
+                             HorizontalOptions="Center">
+
+            <!-- Barra superior -->
+            <Grid ColumnDefinitions="Auto,*">
+                <Border BackgroundColor="{StaticResource AppCard}"
+                        Stroke="{StaticResource AppBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        HeightRequest="40"
+                        WidthRequest="40">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding VolverCommand}" />
+                    </Border.GestureRecognizers>
+                    <Path Data="M15 19l-7-7 7-7"
+                          Stroke="{StaticResource AppText}"
+                          StrokeThickness="2"
+                          StrokeLineCap="Round"
+                          WidthRequest="18"
+                          HeightRequest="18"
+                          HorizontalOptions="Center"
+                          VerticalOptions="Center" />
+                </Border>
+
+                <Label Grid.Column="1"
+                       Text="{Binding Titulo}"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       VerticalOptions="Center"
+                       Margin="15,0,0,0" />
+            </Grid>
+
+            <controls:FloatingEntry Placeholder="Código de barras *"
+                                    Text="{Binding CodigoBarras}"
+                                    IsEnabled="{Binding PuedeEditarCodigo}" />
+
+            <controls:FloatingEntry Placeholder="Nombre del producto *"
+                                    Text="{Binding Nombre}"
+                                    IsEnabled="{Binding PuedeInteractuar}" />
+
+            <controls:FloatingEntry Placeholder="Marca (Ej. Dos Pinos)"
+                                    Text="{Binding Marca}"
+                                    IsEnabled="{Binding PuedeInteractuar}" />
+
+            <!-- Descripcion -->
+            <Border BackgroundColor="{StaticResource AppCard}"
+                    Stroke="{StaticResource AppBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="12,4">
+                <Editor Placeholder="Descripción (opcional)"
+                        PlaceholderColor="{StaticResource AppSubtext}"
+                        TextColor="{StaticResource AppText}"
+                        BackgroundColor="Transparent"
+                        AutoSize="TextChanges"
+                        MinimumHeightRequest="70"
+                        MaxLength="500"
+                        Text="{Binding Descripcion}"
+                        IsEnabled="{Binding PuedeInteractuar}" />
+            </Border>
+
+            <!-- Categoria y unidad -->
+            <Border BackgroundColor="{StaticResource AppCard}"
+                    Stroke="{StaticResource AppBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 20"
+                    Padding="16">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="CLASIFICACIÓN" TextColor="{StaticResource Gray400}" FontSize="12" FontAttributes="Bold" />
+
+                    <Grid ColumnDefinitions="*,Auto" Padding="0,4">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ElegirCategoriaCommand}" />
+                        </Grid.GestureRecognizers>
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Categoría" TextColor="{StaticResource AppSubtext}" FontSize="12" />
+                            <Label Text="{Binding CategoriaTexto}" FontSize="16" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" Text="›" FontSize="26" TextColor="{StaticResource AppYellow}" VerticalOptions="Center" />
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="{StaticResource AppBorder}" />
+
+                    <Grid ColumnDefinitions="*,Auto" Padding="0,4">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ElegirUnidadCommand}" />
+                        </Grid.GestureRecognizers>
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Unidad de medida" TextColor="{StaticResource AppSubtext}" FontSize="12" />
+                            <Label Text="{Binding UnidadTexto}" FontSize="16" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" Text="›" FontSize="26" TextColor="{StaticResource AppYellow}" VerticalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border BackgroundColor="#2A1212"
+                    Stroke="#EF4444"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="14"
+                    IsVisible="{Binding HasError}">
+                <Label Text="{Binding MensajeError}" TextColor="#EF4444" FontSize="13" LineBreakMode="WordWrap" />
+            </Border>
+
+            <Button Text="{Binding TextoGuardar}"
+                    Command="{Binding GuardarCommand}"
+                    IsEnabled="{Binding PuedeInteractuar}"
+                    Margin="0,6,0,0">
+                <Button.Shadow>
+                    <Shadow Brush="{StaticResource AppYellow}" Offset="0,10" Radius="30" Opacity="0.2" />
+                </Button.Shadow>
+            </Button>
+
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}"
+                               IsVisible="{Binding EstaOcupado}"
+                               HorizontalOptions="Center" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -12,4 +12,23 @@
 	</application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
+	<!-- Ubicacion: distancia a los comercios al comparar precios y comercios cercanos. Se pide solo cuando el usuario lo activa. -->
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<!-- Escaner de codigos de barras: la camara se pide al abrir el escaner. La camara no es obligatoria para instalar la app
+	     (se puede escribir el codigo a mano). -->
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-feature android:name="android.hardware.camera" android:required="false" />
+	<!-- Android 11+: para poder abrir la app de mapas ("Como llegar") y el marcador del telefono desde un comercio. -->
+	<queries>
+		<intent>
+			<action android:name="android.intent.action.VIEW" />
+			<data android:scheme="geo" />
+		</intent>
+		<intent>
+			<action android:name="android.intent.action.DIAL" />
+			<data android:scheme="tel" />
+		</intent>
+	</queries>
 </manifest>

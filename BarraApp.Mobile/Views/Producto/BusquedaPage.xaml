@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BarraApp.Mobile.ViewModels.Producto"
+             x:Class="BarraApp.Mobile.Views.Producto.BusquedaPage"
+             x:DataType="vm:BusquedaViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource AppBg}">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*"
+          RowSpacing="12"
+          Padding="20,25,20,0"
+          MaximumWidthRequest="520"
+          HorizontalOptions="Center">
+
+        <!-- 0. Barra superior: volver + buscador -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" ColumnSpacing="12">
+            <Border BackgroundColor="{StaticResource AppCard}"
+                    Stroke="{StaticResource AppBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 20"
+                    HeightRequest="40"
+                    WidthRequest="40"
+                    VerticalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding VolverCommand}" />
+                </Border.GestureRecognizers>
+                <Path Data="M15 19l-7-7 7-7"
+                      Stroke="{StaticResource AppText}"
+                      StrokeThickness="2"
+                      StrokeLineCap="Round"
+                      WidthRequest="18"
+                      HeightRequest="18"
+                      HorizontalOptions="Center"
+                      VerticalOptions="Center" />
+            </Border>
+
+            <Border Grid.Column="1"
+                    BackgroundColor="{StaticResource AppCard}"
+                    Stroke="{StaticResource AppBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    HeightRequest="48"
+                    Padding="16,0">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
+                    <Label Text="🔍" FontSize="16" VerticalOptions="Center" />
+
+                    <Entry x:Name="EntryBusqueda"
+                           Grid.Column="1"
+                           Placeholder="Buscar por nombre o marca..."
+                           Text="{Binding TextoBusqueda}"
+                           ReturnType="Search"
+                           ReturnCommand="{Binding BuscarCommand}" />
+
+                    <Label Grid.Column="2"
+                           Text="✕"
+                           FontSize="16"
+                           TextColor="{StaticResource AppSubtext}"
+                           VerticalOptions="Center"
+                           IsVisible="{Binding HayTexto}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding LimpiarTextoCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                    <Label Grid.Column="3"
+                           Text="📷"
+                           FontSize="18"
+                           VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EscanearCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 1. Categorias (filtro) -->
+        <ScrollView Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalScrollBarVisibility="Never"
+                    IsVisible="{Binding HayCategorias}">
+            <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Categorias}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CategoriaChipViewModel">
+                        <Border BackgroundColor="{StaticResource AppCard}"
+                                Stroke="{StaticResource AppBorder}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 18"
+                                Padding="14,8">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding Seleccionada}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource AppYellow}" />
+                                    <Setter Property="Stroke" Value="{StaticResource PrimaryBrush}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BusquedaViewModel}}, Path=SeleccionarCategoriaCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="{Binding Nombre}" FontSize="13" FontAttributes="Bold">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Seleccionada}" Value="True">
+                                        <Setter Property="TextColor" Value="{StaticResource Black}" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- 2. Avisos y resumen -->
+        <VerticalStackLayout Grid.Row="2" Spacing="8">
+            <Border BackgroundColor="#2A1212"
+                    Stroke="#EF4444"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="14"
+                    IsVisible="{Binding HasError}">
+                <Label Text="{Binding MensajeError}" TextColor="#EF4444" FontSize="13" LineBreakMode="WordWrap" />
+            </Border>
+
+            <Border BackgroundColor="#0E2316"
+                    Stroke="#10B981"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="14"
+                    IsVisible="{Binding HasSuccess}">
+                <Label Text="{Binding MensajeExito}" TextColor="#10B981" FontSize="13" LineBreakMode="WordWrap" />
+            </Border>
+
+            <Label Text="{Binding Resumen}"
+                   TextColor="{StaticResource Gray400}"
+                   FontSize="12"
+                   FontAttributes="Bold"
+                   IsVisible="{Binding HayResultados}" />
+
+            <ActivityIndicator IsRunning="{Binding Buscando}"
+                               IsVisible="{Binding Buscando}"
+                               HeightRequest="32"
+                               HorizontalOptions="Center" />
+        </VerticalStackLayout>
+
+        <!-- 3. Resultados / estados vacios -->
+        <Grid Grid.Row="3">
+
+            <CollectionView ItemsSource="{Binding Resultados}"
+                            SelectionMode="None"
+                            VerticalScrollBarVisibility="Never">
+                <CollectionView.Footer>
+                    <BoxView HeightRequest="30" Color="Transparent" />
+                </CollectionView.Footer>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ProductoItemViewModel">
+                        <Border Margin="0,0,0,10"
+                                BackgroundColor="{StaticResource AppCard}"
+                                Stroke="{StaticResource AppBorder}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 18"
+                                Padding="14">
+                            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
+
+                                <!-- Inicial del producto -->
+                                <Border WidthRequest="46"
+                                        HeightRequest="46"
+                                        StrokeShape="RoundRectangle 23"
+                                        StrokeThickness="0"
+                                        BackgroundColor="{StaticResource AppYellow}"
+                                        VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BusquedaViewModel}}, Path=AbrirDetalleCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding Inicial}"
+                                           TextColor="{StaticResource Black}"
+                                           FontSize="20"
+                                           FontAttributes="Bold"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                    <VerticalStackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BusquedaViewModel}}, Path=AbrirDetalleCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </VerticalStackLayout.GestureRecognizers>
+                                    <Label Text="{Binding Nombre}"
+                                           FontSize="16"
+                                           FontAttributes="Bold"
+                                           MaxLines="2"
+                                           LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding Marca}"
+                                           TextColor="{StaticResource AppSubtext}"
+                                           FontSize="12" />
+                                    <Label Text="{Binding Categoria}"
+                                           TextColor="{StaticResource AppYellow}"
+                                           FontSize="11"
+                                           IsVisible="{Binding TieneCategoria}" />
+                                </VerticalStackLayout>
+
+                                <!-- Favorito -->
+                                <Button Grid.Column="2"
+                                        Text="♡"
+                                        FontSize="24"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{StaticResource AppSubtext}"
+                                        WidthRequest="44"
+                                        HeightRequest="44"
+                                        MinimumHeightRequest="44"
+                                        Padding="0"
+                                        VerticalOptions="Center"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BusquedaViewModel}}, Path=AlternarFavoritoCommand}"
+                                        CommandParameter="{Binding .}">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding EsFavorito}" Value="True">
+                                            <Setter Property="Text" Value="♥" />
+                                            <Setter Property="TextColor" Value="#EF4444" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+
+                                <!-- Agregar a una lista -->
+                                <Button Grid.Column="3"
+                                        Text="+"
+                                        FontSize="22"
+                                        WidthRequest="40"
+                                        HeightRequest="40"
+                                        MinimumHeightRequest="40"
+                                        Padding="0"
+                                        CornerRadius="20"
+                                        VerticalOptions="Center"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BusquedaViewModel}}, Path=AgregarAListaCommand}"
+                                        CommandParameter="{Binding .}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Antes de buscar -->
+            <VerticalStackLayout VerticalOptions="Center" Spacing="8" Margin="0,0,0,60" IsVisible="{Binding MostrarInicial}">
+                <Label Text="🛒" FontSize="46" HorizontalOptions="Center" />
+                <Label Text="Encuentra el mejor precio"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center" />
+                <Label Text="Busca por nombre o marca, o elige una categoría."
+                       TextColor="{StaticResource AppSubtext}"
+                       HorizontalTextAlignment="Center"
+                       HorizontalOptions="Center" />
+                <Button Text="➕ Registrar un producto nuevo"
+                        Command="{Binding RegistrarProductoCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource AppYellow}"
+                        BorderColor="{StaticResource AppYellow}"
+                        BorderWidth="1.5"
+                        HorizontalOptions="Center"
+                        Margin="0,14,0,0" />
+            </VerticalStackLayout>
+
+            <!-- Sin resultados -->
+            <VerticalStackLayout VerticalOptions="Center" Spacing="8" Margin="0,0,0,60" IsVisible="{Binding SinResultados}">
+                <Label Text="😕" FontSize="46" HorizontalOptions="Center" />
+                <Label Text="No encontramos productos"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center" />
+                <Label Text="Prueba con otro nombre, quita el filtro de categoría o regístralo tú."
+                       TextColor="{StaticResource AppSubtext}"
+                       HorizontalTextAlignment="Center"
+                       HorizontalOptions="Center" />
+                <Button Text="➕ Registrar este producto"
+                        Command="{Binding RegistrarProductoCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource AppYellow}"
+                        BorderColor="{StaticResource AppYellow}"
+                        BorderWidth="1.5"
+                        HorizontalOptions="Center"
+                        Margin="0,14,0,0" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>

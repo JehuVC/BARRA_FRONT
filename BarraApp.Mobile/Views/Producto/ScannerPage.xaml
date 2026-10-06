@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:BarraApp.Mobile.ViewModels.Producto"
+             xmlns:scanner="clr-namespace:BarcodeScanning;assembly=BarcodeScanning.Native.Maui"
+             x:Class="BarraApp.Mobile.Views.Producto.ScannerPage"
+             x:DataType="vm:ScannerViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="Black">
+
+    <Grid>
+        <!-- Camara -->
+        <scanner:CameraView x:Name="Camara"
+                            IsVisible="{Binding MostrarCamara}"
+                            CameraEnabled="{Binding CamaraActiva}"
+                            PauseScanning="{Binding Pausado}"
+                            TorchOn="{Binding LinternaEncendida}"
+                            VibrationOnDetected="True"
+                            TapToFocusEnabled="True"
+                            OnDetectionFinished="Camara_OnDetectionFinished" />
+
+        <!-- Marco de lectura -->
+        <Border WidthRequest="280"
+                HeightRequest="170"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Margin="0,0,0,60"
+                BackgroundColor="Transparent"
+                Stroke="{StaticResource AppYellow}"
+                StrokeThickness="3"
+                StrokeShape="RoundRectangle 18"
+                InputTransparent="True"
+                IsVisible="{Binding MostrarCamara}" />
+
+        <!-- Barra superior -->
+        <Grid ColumnDefinitions="Auto,*,Auto"
+              VerticalOptions="Start"
+              Padding="20,25,20,0">
+            <Border BackgroundColor="#99000000"
+                    Stroke="{StaticResource AppBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 20"
+                    HeightRequest="40"
+                    WidthRequest="40">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding VolverCommand}" />
+                </Border.GestureRecognizers>
+                <Path Data="M15 19l-7-7 7-7"
+                      Stroke="White"
+                      StrokeThickness="2"
+                      StrokeLineCap="Round"
+                      WidthRequest="18"
+                      HeightRequest="18"
+                      HorizontalOptions="Center"
+                      VerticalOptions="Center" />
+            </Border>
+
+            <Label Grid.Column="1"
+                   Text="Escanear código"
+                   TextColor="White"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   VerticalOptions="Center"
+                   Margin="15,0,0,0" />
+
+            <Border Grid.Column="2"
+                    BackgroundColor="#99000000"
+                    Stroke="{StaticResource AppBorder}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 20"
+                    HeightRequest="40"
+                    WidthRequest="40"
+                    IsVisible="{Binding MostrarCamara}">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AlternarLinternaCommand}" />
+                </Border.GestureRecognizers>
+                <Label Text="🔦" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding LinternaEncendida}" Value="True">
+                            <Setter Property="Text" Value="💡" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+            </Border>
+        </Grid>
+
+        <!-- Sin permiso de camara -->
+        <VerticalStackLayout VerticalOptions="Center"
+                             Spacing="12"
+                             Padding="30,0,30,80"
+                             MaximumWidthRequest="520"
+                             IsVisible="{Binding SinPermiso}">
+            <Label Text="📷" FontSize="56" HorizontalOptions="Center" />
+            <Label Text="Necesitamos usar la cámara"
+                   TextColor="White"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+            <Label Text="La usamos solo para leer el código de barras de los productos. Puedes darle permiso desde los ajustes o escribir el código a mano."
+                   TextColor="{StaticResource AppSubtext}"
+                   HorizontalTextAlignment="Center"
+                   LineBreakMode="WordWrap" />
+            <Button Text="Abrir ajustes"
+                    Command="{Binding AbrirAjustesCommand}"
+                    Margin="0,8,0,0" />
+        </VerticalStackLayout>
+
+        <!-- Panel inferior -->
+        <Border VerticalOptions="End"
+                BackgroundColor="#E61A1A1A"
+                Stroke="{StaticResource AppBorder}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 24,24,0,0"
+                Padding="20,18,20,28">
+            <VerticalStackLayout Spacing="12"
+                                 MaximumWidthRequest="520"
+                                 HorizontalOptions="Center">
+
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" HorizontalOptions="Center">
+                    <ActivityIndicator IsRunning="{Binding Buscando}"
+                                       IsVisible="{Binding Buscando}"
+                                       HeightRequest="20"
+                                       WidthRequest="20"
+                                       Color="{StaticResource AppYellow}" />
+                    <Label Grid.Column="1"
+                           Text="{Binding Indicacion}"
+                           TextColor="White"
+                           HorizontalTextAlignment="Center"
+                           VerticalOptions="Center" />
+                </Grid>
+
+                <Border BackgroundColor="#2A1212"
+                        Stroke="#EF4444"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="12"
+                        IsVisible="{Binding HasError}">
+                    <Label Text="{Binding MensajeError}" TextColor="#EF4444" FontSize="13" LineBreakMode="WordWrap" />
+                </Border>
+
+                <Button Text="⌨️ Escribir el código a mano"
+                        Command="{Binding EscribirCodigoCommand}"
+                        IsEnabled="{Binding PuedeInteractuar}"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource AppYellow}"
+                        BorderColor="{StaticResource AppYellow}"
+                        BorderWidth="1.5" />
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>

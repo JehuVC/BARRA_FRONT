@@ -1,5 +1,10 @@
+using BarraApp.Mobile.Views.Comercio;
+using BarraApp.Mobile.Views.Favorito;
 using BarraApp.Mobile.Views.Guild;
+using BarraApp.Mobile.Views.Historial;
 using BarraApp.Mobile.Views.ListaCompra;
+using BarraApp.Mobile.Views.Pago;
+using BarraApp.Mobile.Views.Producto;
 using BarraApp.Mobile.Views.Usuario;
 
 namespace BarraApp.Mobile;
@@ -18,5 +23,14 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(GuildPage), typeof(GuildPage));
         Routing.RegisterRoute(nameof(ListasPage), typeof(ListasPage));
         Routing.RegisterRoute(nameof(ListaDetallePage), typeof(ListaDetallePage));
+        Routing.RegisterRoute(nameof(BusquedaPage), typeof(BusquedaPage));
+        Routing.RegisterRoute(nameof(ProductoDetallePage), typeof(ProductoDetallePage));
+        Routing.RegisterRoute(nameof(ProductoFormPage), typeof(ProductoFormPage));
+        Routing.RegisterRoute(nameof(PagoPage), typeof(PagoPage));
+        Routing.RegisterRoute(nameof(ScannerPage), typeof(ScannerPage));
+        Routing.RegisterRoute(nameof(FavoritosPage), typeof(FavoritosPage));
+        Routing.RegisterRoute(nameof(HistorialPage), typeof(HistorialPage));
+        Routing.RegisterRoute(nameof(ComerciosPage), typeof(ComerciosPage));
+        Routing.RegisterRoute(nameof(ComercioFormPage), typeof(ComercioFormPage));
     }
 }
