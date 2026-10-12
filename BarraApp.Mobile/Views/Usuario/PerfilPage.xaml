@@ -8,121 +8,321 @@
              BackgroundColor="{StaticResource AppBg}">
 
     <ContentPage.Resources>
-        <!-- Estilo con HOVER para los botones amarillos -->
-        <Style x:Key="YellowActionButtonStyle" TargetType="Button">
+        <!-- Estilo Limpio para Botones Amarillos con Sombra -->
+        <Style x:Key="PremiumYellowButtonStyle" TargetType="Button">
             <Setter Property="BackgroundColor" Value="{StaticResource AppYellow}" />
             <Setter Property="TextColor" Value="{StaticResource Black}" />
             <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="14" />
             <Setter Property="CornerRadius" Value="12" />
-            <Setter Property="HeightRequest" Value="44" />
+            <Setter Property="HeightRequest" Value="46" />
             <Setter Property="Padding" Value="20,0" />
-            <Setter Property="VisualStateManager.VisualStateGroups">
-                <VisualStateGroupList>
-                    <VisualStateGroup x:Name="CommonStates">
-                        <VisualState x:Name="Normal">
-                            <VisualState.Setters>
-                                <Setter Property="Scale" Value="1.0" />
-                                <Setter Property="BackgroundColor" Value="{StaticResource AppYellow}" />
-                            </VisualState.Setters>
-                        </VisualState>
-                        <VisualState x:Name="PointerOver">
-                            <!-- Efecto Hover: crece ligeramente y cambia de tono -->
-                            <VisualState.Setters>
-                                <Setter Property="Scale" Value="1.03" />
-                                <Setter Property="BackgroundColor" Value="#FFE033" />
-                            </VisualState.Setters>
-                        </VisualState>
-                        <VisualState x:Name="Pressed">
-                            <VisualState.Setters>
-                                <Setter Property="Scale" Value="0.97" />
-                            </VisualState.Setters>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateGroupList>
-            </Setter>
+            <Setter Property="Shadow" Value="{Shadow Brush=#40F59E0B, Offset='0,4', Radius=10, Opacity=0.7}" />
+        </Style>
+
+        <!-- Estilo para Botón Volver -->
+        <Style x:Key="BackButtonHoverStyle" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource AppCard}" />
+            <Setter Property="Stroke" Value="{StaticResource AppBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 21" />
+            <Setter Property="HeightRequest" Value="42" />
+            <Setter Property="WidthRequest" Value="42" />
+        </Style>
+
+        <!-- Estilo para Botón Cancelar -->
+        <Style x:Key="CancelButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{StaticResource Gray600}" />
+            <Setter Property="TextColor" Value="{StaticResource AppText}" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HeightRequest" Value="46" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+
+        <!-- Estilo para Botón Cerrar Sesión -->
+        <Style x:Key="DangerButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="TextColor" Value="#EF4444" />
+            <Setter Property="BorderColor" Value="#EF4444" />
+            <Setter Property="BorderWidth" Value="1.5" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="HeightRequest" Value="48" />
+        </Style>
+
+        <!-- Estilo para Botón Confirmar Salir en Modal -->
+        <Style x:Key="ConfirmRedButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#DC2626" />
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HeightRequest" Value="46" />
         </Style>
     </ContentPage.Resources>
 
-    <ScrollView>
-        <!-- Contenedor con ancho máximo responsive para verse como móvil en PC -->
-        <VerticalStackLayout Padding="20,25,20,40" 
-                             Spacing="18"
-                             MaximumWidthRequest="520"
-                             HorizontalOptions="CenterAndExpand">
+    <Grid>
+        <!-- 1. CONTENIDO PRINCIPAL SCROLLABLE -->
+        <ScrollView>
+            <Grid HorizontalOptions="Fill" Padding="20,25,20,40">
+                <VerticalStackLayout Spacing="20"
+                                     MaximumWidthRequest="460"
+                                     HorizontalOptions="Center"
+                                     WidthRequest="460">
 
-            <!-- 1. BARRA SUPERIOR -->
-            <Grid ColumnDefinitions="Auto, *">
-                <Border BackgroundColor="{StaticResource AppCard}"
-                        Stroke="{StaticResource AppBorder}"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 20"
-                        HeightRequest="40"
-                        WidthRequest="40"
-                        HorizontalOptions="Start">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding VolverCommand}" />
-                    </Border.GestureRecognizers>
-                    <Path Data="M15 19l-7-7 7-7"
-                          Stroke="{StaticResource AppText}"
-                          StrokeThickness="2"
-                          StrokeLineCap="Round"
-                          WidthRequest="18"
-                          HeightRequest="18"
-                          HorizontalOptions="Center"
-                          VerticalOptions="Center" />
-                </Border>
+                    <!-- BARRA SUPERIOR -->
+                    <Grid ColumnDefinitions="Auto, *">
+                        <Border Style="{StaticResource BackButtonHoverStyle}"
+                                HorizontalOptions="Start">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding VolverCommand}" />
+                            </Border.GestureRecognizers>
+                            <Path Data="M15 19l-7-7 7-7"
+                                  Stroke="{StaticResource AppText}"
+                                  StrokeThickness="2.2"
+                                  StrokeLineCap="Round"
+                                  WidthRequest="18"
+                                  HeightRequest="18"
+                                  HorizontalOptions="Center"
+                                  VerticalOptions="Center" />
+                        </Border>
 
-                <Label Grid.Column="1"
-                       Text="Mi Perfil"
-                       TextColor="{StaticResource AppText}"
-                       FontSize="20"
-                       FontAttributes="Bold"
-                       VerticalOptions="Center"
-                       Margin="15,0,0,0" />
+                        <Label Grid.Column="1"
+                               Text="Mi Perfil"
+                               TextColor="{StaticResource AppText}"
+                               FontSize="21"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center"
+                               Margin="14,0,0,0" />
+                    </Grid>
+
+                    <!-- Indicador de Carga -->
+                    <ActivityIndicator IsRunning="{Binding EstaOcupado}"
+                                       IsVisible="{Binding EstaOcupado}"
+                                       Color="{StaticResource AppYellow}"
+                                       HeightRequest="36"
+                                       HorizontalOptions="Center" />
+
+                    <!-- 2. TARJETA DE USUARIO CON IDENTIDAD PREMIUM MINIMALISTA -->
+                    <Border x:Name="TarjetaUsuario"
+                            BackgroundColor="{StaticResource AppCard}"
+                            Stroke="{StaticResource AppBorder}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 24"
+                            Padding="22"
+                            HorizontalOptions="Fill"
+                            Shadow="{Shadow Brush=#30000000, Offset='0,8', Radius=16, Opacity=0.7}">
+                        <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+
+                            <!-- Avatar con Corona Vectorial Dorada -->
+                            <Grid HeightRequest="88" WidthRequest="88" HorizontalOptions="Center">
+                                <!-- Aro Principal Dorado -->
+                                <Border Stroke="{StaticResource AppYellow}"
+                                        StrokeThickness="2.5"
+                                        StrokeShape="RoundRectangle 44"
+                                        HeightRequest="84"
+                                        WidthRequest="84"
+                                        BackgroundColor="#1A202C"
+                                        Shadow="{Shadow Brush=#50F59E0B, Offset='0,4', Radius=12, Opacity=0.7}"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center">
+                                    <Path Data="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                                          Fill="{StaticResource AppYellow}"
+                                          Aspect="Uniform"
+                                          WidthRequest="38"
+                                          HeightRequest="38"
+                                          HorizontalOptions="Center"
+                                          VerticalOptions="Center" />
+                                </Border>
+
+                                <!-- Corona VIP Vectorial Minimalista -->
+                                <Border BackgroundColor="#111827"
+                                        Stroke="{StaticResource AppYellow}"
+                                        StrokeThickness="1.5"
+                                        StrokeShape="RoundRectangle 13"
+                                        HeightRequest="26"
+                                        WidthRequest="26"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Start"
+                                        Margin="0,-2,-2,0">
+                                    <Path Data="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"
+                                          Fill="{StaticResource AppYellow}"
+                                          Aspect="Uniform"
+                                          WidthRequest="14"
+                                          HeightRequest="14"
+                                          HorizontalOptions="Center"
+                                          VerticalOptions="Center" />
+                                </Border>
+                            </Grid>
+
+                            <!-- Nombre del Usuario -->
+                            <Label Text="{Binding Nombre}"
+                                   TextColor="{StaticResource AppText}"
+                                   FontSize="22"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                   Margin="0,4,0,0" />
+
+                            <!-- Badge "USUARIO PREMIUM" con Estrella Vectorial -->
+                            <Border BackgroundColor="#221C0E"
+                                    Stroke="{StaticResource AppYellow}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="12,4"
+                                    HorizontalOptions="Center">
+                                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                    <Path Data="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                                          Fill="{StaticResource AppYellow}"
+                                          Aspect="Uniform"
+                                          WidthRequest="12"
+                                          HeightRequest="12"
+                                          VerticalOptions="Center" />
+                                    <Label Text="USUARIO PREMIUM"
+                                           TextColor="{StaticResource AppYellow}"
+                                           FontSize="10"
+                                           FontAttributes="Bold"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </Border>
+
+                            <!-- Correo Electrónico -->
+                            <Label Text="{Binding Correo}"
+                                   TextColor="{StaticResource Gray400}"
+                                   FontSize="13"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- 3. TARJETA DE FORMULARIO DE EDICIÓN -->
+                    <Border x:Name="TarjetaFormulario"
+                            BackgroundColor="{StaticResource AppCard}"
+                            Stroke="{StaticResource AppBorder}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 24"
+                            Padding="22"
+                            HorizontalOptions="Fill"
+                            Shadow="{Shadow Brush=#30000000, Offset='0,8', Radius=16, Opacity=0.7}">
+                        <VerticalStackLayout Spacing="18">
+
+                            <!-- Campo: Nombre -->
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="NOMBRE COMPLETO"
+                                       FontSize="11"
+                                       TextColor="{StaticResource AppYellow}"
+                                       FontAttributes="Bold" />
+                                <Border Style="{StaticResource InputBorderStyle}"
+                                        StrokeShape="RoundRectangle 14"
+                                        HeightRequest="50"
+                                        Padding="16,0"
+                                        HorizontalOptions="Fill">
+                                    <Entry Text="{Binding Nombre}"
+                                           IsEnabled="{Binding EstaEditando}"
+                                           TextColor="{StaticResource AppText}"
+                                           FontSize="15"
+                                           VerticalOptions="Center"
+                                           BackgroundColor="Transparent" />
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <!-- Campo: Zona -->
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="ZONA / UBICACIÓN"
+                                       FontSize="11"
+                                       TextColor="{StaticResource AppYellow}"
+                                       FontAttributes="Bold" />
+                                <Border Style="{StaticResource InputBorderStyle}"
+                                        StrokeShape="RoundRectangle 14"
+                                        HeightRequest="50"
+                                        Padding="16,0"
+                                        HorizontalOptions="Fill">
+                                    <Entry Text="{Binding Zona}"
+                                           IsEnabled="{Binding EstaEditando}"
+                                           TextColor="{StaticResource AppText}"
+                                           FontSize="15"
+                                           VerticalOptions="Center"
+                                           BackgroundColor="Transparent" />
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <!-- Botones de Acción -->
+                            <HorizontalStackLayout Spacing="12"
+                                                   HorizontalOptions="End"
+                                                   Margin="0,10,0,0">
+                                <Button Text="Editar Perfil"
+                                        Style="{StaticResource PremiumYellowButtonStyle}"
+                                        Command="{Binding HabilitarEdicionCommand}"
+                                        IsVisible="{Binding NoEstaEditando}" />
+
+                                <Button Text="Cancelar"
+                                        Style="{StaticResource CancelButtonStyle}"
+                                        Command="{Binding CancelarEdicionCommand}"
+                                        IsVisible="{Binding EstaEditando}"
+                                        WidthRequest="100" />
+
+                                <Button Text="Guardar Cambios"
+                                        Style="{StaticResource PremiumYellowButtonStyle}"
+                                        Command="{Binding SolicitarGuardarCambiosCommand}"
+                                        IsVisible="{Binding EstaEditando}" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- 4. BOTÓN CERRAR SESIÓN -->
+                    <Button x:Name="BotonCerrarSesion"
+                            Text="Cerrar Sesión"
+                            Style="{StaticResource DangerButtonStyle}"
+                            Command="{Binding SolicitarCerrarSesionCommand}"
+                            HorizontalOptions="Fill"
+                            Margin="0,6,0,10" />
+
+                </VerticalStackLayout>
             </Grid>
+        </ScrollView>
 
-            <!-- Indicador de Carga -->
-            <ActivityIndicator IsRunning="{Binding EstaOcupado}"
-                               IsVisible="{Binding EstaOcupado}"
-                               Color="{StaticResource AppYellow}"
-                               HeightRequest="36"
-                               HorizontalOptions="Center" />
+        <!-- 2. NOTIFICACIONES TOAST FLOTANTES -->
+        <VerticalStackLayout VerticalOptions="Start"
+                             HorizontalOptions="Center"
+                             MaximumWidthRequest="460"
+                             WidthRequest="460"
+                             Padding="20,15,20,0"
+                             InputTransparent="False">
 
-            <!-- NOTIFICACIÓN DE ÉXITO ESTILO TOAST ANIMADA -->
             <Border x:Name="NotificacionExito"
-                    BackgroundColor="#0E2316"
+                    BackgroundColor="#0B2014"
                     Stroke="#10B981"
                     StrokeThickness="1.5"
-                    StrokeShape="RoundRectangle 16"
-                    Padding="16"
+                    StrokeShape="RoundRectangle 18"
+                    Padding="14,12"
                     IsVisible="{Binding HasSuccess}"
-                    Shadow="{Shadow Brush=#4010B981, Offset='0,4', Radius=12, Opacity=0.8}">
+                    Opacity="0"
+                    TranslationY="-50"
+                    Shadow="{Shadow Brush=#6010B981, Offset='0,8', Radius=16, Opacity=0.9}">
                 <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="12" VerticalOptions="Center">
-                    <!-- Insignia Circular con Icono -->
                     <Border BackgroundColor="#10B981"
-                            StrokeShape="RoundRectangle 20"
-                            HeightRequest="38"
-                            WidthRequest="38"
+                            StrokeShape="RoundRectangle 16"
+                            HeightRequest="32"
+                            WidthRequest="32"
                             StrokeThickness="0">
                         <Label Text="✓"
                                TextColor="Black"
-                               FontSize="20"
+                               FontSize="16"
                                FontAttributes="Bold"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
                     </Border>
 
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                        <Label Text="¡Operación Exitosa!"
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                        <Label Text="¡Actualización Exitosa!"
                                TextColor="#10B981"
-                               FontSize="14"
+                               FontSize="13"
                                FontAttributes="Bold" />
                         <Label Text="{Binding MensajeExito}"
                                TextColor="#D1FAE5"
                                FontSize="12" />
                     </VerticalStackLayout>
 
-                    <!-- Botón de Cerrar Notificación -->
                     <Label Grid.Column="2"
                            Text="✕"
                            TextColor="#6EE7B7"
@@ -136,33 +336,34 @@
                 </Grid>
             </Border>
 
-            <!-- NOTIFICACIÓN DE ERROR ESTILO TOAST -->
             <Border x:Name="NotificacionError"
-                    BackgroundColor="#270F13"
+                    BackgroundColor="#260D12"
                     Stroke="#EF4444"
                     StrokeThickness="1.5"
-                    StrokeShape="RoundRectangle 16"
-                    Padding="16"
+                    StrokeShape="RoundRectangle 18"
+                    Padding="14,12"
                     IsVisible="{Binding HasError}"
-                    Shadow="{Shadow Brush=#40EF4444, Offset='0,4', Radius=12, Opacity=0.8}">
+                    Opacity="0"
+                    TranslationY="-50"
+                    Shadow="{Shadow Brush=#60EF4444, Offset='0,8', Radius=16, Opacity=0.9}">
                 <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="12" VerticalOptions="Center">
                     <Border BackgroundColor="#EF4444"
-                            StrokeShape="RoundRectangle 20"
-                            HeightRequest="38"
-                            WidthRequest="38"
+                            StrokeShape="RoundRectangle 16"
+                            HeightRequest="32"
+                            WidthRequest="32"
                             StrokeThickness="0">
                         <Label Text="!"
                                TextColor="White"
-                               FontSize="20"
+                               FontSize="16"
                                FontAttributes="Bold"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
                     </Border>
 
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
                         <Label Text="Atención"
                                TextColor="#EF4444"
-                               FontSize="14"
+                               FontSize="13"
                                FontAttributes="Bold" />
                         <Label Text="{Binding MensajeError}"
                                TextColor="#FEE2E2"
@@ -181,129 +382,137 @@
                     </Label>
                 </Grid>
             </Border>
+        </VerticalStackLayout>
 
-            <!-- 2. TARJETA DE USUARIO (AVATAR) -->
+        <!-- ========================================================================= -->
+        <!-- 3. MODAL PERSONALIZADO: CONFIRMAR GUARDAR CAMBIOS (VECTORIAL)             -->
+        <!-- ========================================================================= -->
+        <Grid BackgroundColor="#D9000000"
+              IsVisible="{Binding MostrarModalGuardar}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CancelarModalGuardarCommand}" />
+            </Grid.GestureRecognizers>
+
             <Border BackgroundColor="{StaticResource AppCard}"
-                    Stroke="{StaticResource AppBorder}"
-                    StrokeThickness="1"
+                    Stroke="{StaticResource AppYellow}"
+                    StrokeThickness="1.5"
                     StrokeShape="RoundRectangle 24"
-                    Padding="20">
-                <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
-                    <Border Stroke="{StaticResource AppYellow}"
-                            StrokeThickness="2"
-                            StrokeShape="RoundRectangle 35"
-                            HeightRequest="70"
-                            WidthRequest="70"
-                            BackgroundColor="{StaticResource Gray600}"
+                    Padding="24"
+                    WidthRequest="360"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+
+                <VerticalStackLayout Spacing="18" HorizontalOptions="Fill">
+                    <Border BackgroundColor="#221C0E"
+                            Stroke="{StaticResource AppYellow}"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 30"
+                            HeightRequest="60"
+                            WidthRequest="60"
                             HorizontalOptions="Center">
-                        <Label Text="🧔🏻‍♂️"
-                               FontSize="32"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center" />
+                        <Path Data="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+                              Fill="{StaticResource AppYellow}"
+                              Aspect="Uniform"
+                              WidthRequest="24"
+                              HeightRequest="24"
+                              HorizontalOptions="Center"
+                              VerticalOptions="Center" />
                     </Border>
 
-                    <Label Text="{Binding Nombre}"
-                           TextColor="{StaticResource AppText}"
-                           FontSize="20"
-                           FontAttributes="Bold"
-                           HorizontalTextAlignment="Center" />
+                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                        <Label Text="¿Guardar Cambios?"
+                               FontSize="19"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource AppText}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Se actualizará la información de tu perfil en el sistema."
+                               FontSize="13"
+                               TextColor="{StaticResource Gray400}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
 
-                    <Label Text="{Binding Correo}"
-                           TextColor="{StaticResource Gray400}"
-                           FontSize="14"
-                           HorizontalTextAlignment="Center" />
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="12" Margin="0,8,0,0">
+                        <Button Grid.Column="0"
+                                Text="Cancelar"
+                                Style="{StaticResource CancelButtonStyle}"
+                                Command="{Binding CancelarModalGuardarCommand}" />
+
+                        <Button Grid.Column="1"
+                                Text="Sí, guardar"
+                                Style="{StaticResource PremiumYellowButtonStyle}"
+                                Command="{Binding ConfirmarGuardarCambiosCommand}" />
+                    </Grid>
                 </VerticalStackLayout>
             </Border>
+        </Grid>
 
-            <!-- 3. FORMULARIO DE EDICIÓN -->
+        <!-- ========================================================================= -->
+        <!-- 4. MODAL PERSONALIZADO: CONFIRMAR CERRAR SESIÓN (VECTORIAL)               -->
+        <!-- ========================================================================= -->
+        <Grid BackgroundColor="#D9000000"
+              IsVisible="{Binding MostrarModalLogout}">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CancelarModalLogoutCommand}" />
+            </Grid.GestureRecognizers>
+
             <Border BackgroundColor="{StaticResource AppCard}"
-                    Stroke="{StaticResource AppBorder}"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 20"
-                    Padding="20">
-                <VerticalStackLayout Spacing="18">
+                    Stroke="#EF4444"
+                    StrokeThickness="1.5"
+                    StrokeShape="RoundRectangle 24"
+                    Padding="24"
+                    WidthRequest="360"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
 
-                    <!-- Campo: Nombre -->
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="NOMBRE COMPLETO"
-                               FontSize="11"
-                               TextColor="{StaticResource AppYellow}"
-                               FontAttributes="Bold" />
-                        <Border Style="{StaticResource InputBorderStyle}"
-                                StrokeShape="RoundRectangle 12"
-                                HeightRequest="50"
-                                Padding="15,0">
-                            <Entry Text="{Binding Nombre}"
-                                   IsEnabled="{Binding EstaEditando}"
-                                   TextColor="{StaticResource AppText}"
-                                   FontSize="15"
-                                   VerticalOptions="Center"
-                                   BackgroundColor="Transparent" />
-                        </Border>
+                <VerticalStackLayout Spacing="18" HorizontalOptions="Fill">
+                    <Border BackgroundColor="#260D12"
+                            Stroke="#EF4444"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 30"
+                            HeightRequest="60"
+                            WidthRequest="60"
+                            HorizontalOptions="Center">
+                        <Path Data="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"
+                              Fill="#EF4444"
+                              Aspect="Uniform"
+                              WidthRequest="24"
+                              HeightRequest="24"
+                              HorizontalOptions="Center"
+                              VerticalOptions="Center" />
+                    </Border>
+
+                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                        <Label Text="¿Cerrar Sesión?"
+                               FontSize="19"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource AppText}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Tendrás que volver a ingresar tus credenciales para acceder."
+                               FontSize="13"
+                               TextColor="{StaticResource Gray400}"
+                               HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
 
-                    <!-- Campo: Zona -->
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="ZONA / UBICACIÓN"
-                               FontSize="11"
-                               TextColor="{StaticResource AppYellow}"
-                               FontAttributes="Bold" />
-                        <Border Style="{StaticResource InputBorderStyle}"
-                                StrokeShape="RoundRectangle 12"
-                                HeightRequest="50"
-                                Padding="15,0">
-                            <Entry Text="{Binding Zona}"
-                                   IsEnabled="{Binding EstaEditando}"
-                                   TextColor="{StaticResource AppText}"
-                                   FontSize="15"
-                                   VerticalOptions="Center"
-                                   BackgroundColor="Transparent" />
-                        </Border>
-                    </VerticalStackLayout>
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="12" Margin="0,8,0,0">
+                        <Button Grid.Column="0"
+                                Text="Cancelar"
+                                Style="{StaticResource CancelButtonStyle}"
+                                Command="{Binding CancelarModalLogoutCommand}" />
 
-                    <!-- Botones de Acción con HOVER -->
-                    <HorizontalStackLayout Spacing="12"
-                                           HorizontalOptions="End"
-                                           Margin="0,10,0,0">
-
-                        <!-- Botón Editar Perfil con Hover -->
-                        <Button Text="Editar Perfil"
-                                Style="{StaticResource YellowActionButtonStyle}"
-                                Command="{Binding HabilitarEdicionCommand}"
-                                IsVisible="{Binding NoEstaEditando}" />
-
-                        <!-- Botón Cancelar -->
-                        <Button Text="Cancelar"
-                                Command="{Binding CancelarEdicionCommand}"
-                                IsVisible="{Binding EstaEditando}"
-                                BackgroundColor="{StaticResource Gray600}"
-                                TextColor="{StaticResource AppText}"
-                                CornerRadius="12"
-                                HeightRequest="44"
-                                Padding="15,0" />
-
-                        <!-- Botón Guardar con Hover -->
-                        <Button Text="Guardar"
-                                Style="{StaticResource YellowActionButtonStyle}"
-                                Command="{Binding GuardarCambiosCommand}"
-                                IsVisible="{Binding EstaEditando}" />
-                    </HorizontalStackLayout>
+                        <Button Grid.Column="1"
+                                Text="Sí, salir"
+                                Style="{StaticResource ConfirmRedButtonStyle}"
+                                Command="{Binding ConfirmarCerrarSesionCommand}" />
+                    </Grid>
                 </VerticalStackLayout>
             </Border>
+        </Grid>
 
-            <!-- 4. BOTÓN CERRAR SESIÓN -->
-            <Button Text="Cerrar Sesión"
-                    Command="{Binding CerrarSesionCommand}"
-                    BackgroundColor="Transparent"
-                    TextColor="#EF4444"
-                    BorderColor="#EF4444"
-                    BorderWidth="1.5"
-                    CornerRadius="14"
-                    FontAttributes="Bold"
-                    FontSize="15"
-                    HeightRequest="50"
-                    Margin="0,10,0,10" />
-
-        </VerticalStackLayout>
-    </ScrollView>
+    </Grid>
 </ContentPage>

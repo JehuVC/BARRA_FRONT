@@ -7,198 +7,387 @@
              Shell.NavBarIsVisible="False"
              BackgroundColor="{StaticResource AppBg}">
 
-    <Grid RowDefinitions="Auto,Auto,*"
-          RowSpacing="12"
-          Padding="20,25,20,0"
-          MaximumWidthRequest="520"
-          HorizontalOptions="Center">
+    <ContentPage.Resources>
+        <!-- Estilo con Hover para Tarjetas de Favorito -->
+        <Style x:Key="FavoritoCardStyle" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource AppCard}" />
+            <Setter Property="Stroke" Value="{StaticResource AppBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+            <Setter Property="Padding" Value="14" />
+            <Setter Property="Margin" Value="0,0,0,10" />
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal">
+                            <VisualState.Setters>
+                                <Setter Property="Scale" Value="1.0" />
+                                <Setter Property="Stroke" Value="{StaticResource AppBorder}" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="PointerOver">
+                            <VisualState.Setters>
+                                <Setter Property="Scale" Value="1.015" />
+                                <Setter Property="Stroke" Value="{StaticResource Gray600}" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
 
-        <!-- 0. Barra superior -->
-        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
-            <Border BackgroundColor="{StaticResource AppCard}"
-                    Stroke="{StaticResource AppBorder}"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 20"
-                    HeightRequest="40"
-                    WidthRequest="40">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding VolverCommand}" />
-                </Border.GestureRecognizers>
-                <Path Data="M15 19l-7-7 7-7"
-                      Stroke="{StaticResource AppText}"
-                      StrokeThickness="2"
-                      StrokeLineCap="Round"
-                      WidthRequest="18"
-                      HeightRequest="18"
-                      HorizontalOptions="Center"
-                      VerticalOptions="Center" />
-            </Border>
+        <!-- Botón de Acción Amarillo Primario -->
+        <Style x:Key="PrimaryActionYellowButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{StaticResource AppYellow}" />
+            <Setter Property="TextColor" Value="{StaticResource Black}" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HeightRequest" Value="44" />
+            <Setter Property="Padding" Value="20,0" />
+        </Style>
 
-            <Label Grid.Column="1"
-                   Text="Mis favoritos"
-                   FontSize="20"
-                   FontAttributes="Bold"
-                   VerticalOptions="Center"
-                   Margin="15,0,0,0" />
+        <!-- Botón Cancelar en Modal -->
+        <Style x:Key="CancelButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{StaticResource Gray600}" />
+            <Setter Property="TextColor" Value="{StaticResource AppText}" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HeightRequest" Value="46" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
 
-            <Label Grid.Column="2"
-                   Text="{Binding Resumen}"
-                   TextColor="{StaticResource AppSubtext}"
-                   FontSize="13"
-                   VerticalOptions="Center"
-                   IsVisible="{Binding HayFavoritos}" />
-        </Grid>
+        <!-- Botón Confirmar Rojo en Modal -->
+        <Style x:Key="ConfirmRedButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#DC2626" />
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HeightRequest" Value="46" />
+        </Style>
+    </ContentPage.Resources>
 
-        <!-- 1. Avisos -->
-        <VerticalStackLayout Grid.Row="1" Spacing="8">
-            <Border BackgroundColor="#2A1212"
-                    Stroke="#EF4444"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 16"
-                    Padding="14"
-                    IsVisible="{Binding HasError}">
-                <Label Text="{Binding MensajeError}" TextColor="#EF4444" FontSize="13" LineBreakMode="WordWrap" />
-            </Border>
+    <Grid>
+        <!-- 1. CONTENIDO PRINCIPAL -->
+        <Grid RowDefinitions="Auto,Auto,*"
+              RowSpacing="12"
+              Padding="20,25,20,0"
+              MaximumWidthRequest="520"
+              HorizontalOptions="Center">
 
-            <Border BackgroundColor="#0E2316"
-                    Stroke="#10B981"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 16"
-                    Padding="14,10"
-                    IsVisible="{Binding HasSuccess}">
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                    <Label Text="{Binding MensajeExito}"
-                           TextColor="#10B981"
-                           FontSize="13"
-                           LineBreakMode="WordWrap"
-                           VerticalOptions="Center" />
-                    <Label Grid.Column="1"
-                           Text="Deshacer"
-                           TextColor="{StaticResource AppYellow}"
-                           FontSize="13"
-                           FontAttributes="Bold"
-                           TextDecorations="Underline"
-                           VerticalOptions="Center"
-                           IsVisible="{Binding PuedeDeshacer}">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding DeshacerCommand}" />
-                        </Label.GestureRecognizers>
-                    </Label>
-                </Grid>
-            </Border>
-        </VerticalStackLayout>
+            <!-- 0. BARRA SUPERIOR -->
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+                <Border BackgroundColor="{StaticResource AppCard}"
+                        Stroke="{StaticResource AppBorder}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        HeightRequest="40"
+                        WidthRequest="40">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding VolverCommand}" />
+                    </Border.GestureRecognizers>
+                    <Path Data="M15 19l-7-7 7-7"
+                          Stroke="{StaticResource AppText}"
+                          StrokeThickness="2"
+                          StrokeLineCap="Round"
+                          WidthRequest="18"
+                          HeightRequest="18"
+                          HorizontalOptions="Center"
+                          VerticalOptions="Center" />
+                </Border>
 
-        <!-- 2. Lista -->
-        <Grid Grid.Row="2">
-
-            <RefreshView IsRefreshing="{Binding Cargando, Mode=TwoWay}"
-                         Command="{Binding CargarCommand}"
-                         RefreshColor="{StaticResource AppYellow}">
-                <CollectionView ItemsSource="{Binding Favoritos}"
-                                SelectionMode="None"
-                                VerticalScrollBarVisibility="Never">
-                    <CollectionView.Footer>
-                        <BoxView HeightRequest="30" Color="Transparent" />
-                    </CollectionView.Footer>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="vm:FavoritoItemViewModel">
-                            <Border Margin="0,0,0,10"
-                                    BackgroundColor="{StaticResource AppCard}"
-                                    Stroke="{StaticResource AppBorder}"
-                                    StrokeThickness="1"
-                                    StrokeShape="RoundRectangle 18"
-                                    Padding="14">
-                                <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
-
-                                    <!-- Inicial del producto -->
-                                    <Border WidthRequest="46"
-                                            HeightRequest="46"
-                                            StrokeShape="RoundRectangle 23"
-                                            StrokeThickness="0"
-                                            BackgroundColor="{StaticResource AppYellow}"
-                                            VerticalOptions="Center">
-                                        <Border.GestureRecognizers>
-                                            <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FavoritosViewModel}}, Path=AbrirDetalleCommand}"
-                                                CommandParameter="{Binding .}" />
-                                        </Border.GestureRecognizers>
-                                        <Label Text="{Binding Inicial}"
-                                               TextColor="{StaticResource Black}"
-                                               FontSize="20"
-                                               FontAttributes="Bold"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center" />
-                                    </Border>
-
-                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
-                                        <VerticalStackLayout.GestureRecognizers>
-                                            <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FavoritosViewModel}}, Path=AbrirDetalleCommand}"
-                                                CommandParameter="{Binding .}" />
-                                        </VerticalStackLayout.GestureRecognizers>
-                                        <Label Text="{Binding Nombre}"
-                                               FontSize="16"
-                                               FontAttributes="Bold"
-                                               MaxLines="2"
-                                               LineBreakMode="TailTruncation" />
-                                        <Label Text="{Binding Marca}"
-                                               TextColor="{StaticResource AppSubtext}"
-                                               FontSize="12" />
-                                        <Label Text="{Binding Agregado}"
-                                               TextColor="{StaticResource Gray500}"
-                                               FontSize="11"
-                                               IsVisible="{Binding TieneFecha}" />
-                                    </VerticalStackLayout>
-
-                                    <!-- Quitar de favoritos -->
-                                    <Button Grid.Column="2"
-                                            Text="♥"
-                                            FontSize="24"
-                                            BackgroundColor="Transparent"
-                                            TextColor="#EF4444"
-                                            WidthRequest="44"
-                                            HeightRequest="44"
-                                            MinimumHeightRequest="44"
-                                            Padding="0"
-                                            VerticalOptions="Center"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FavoritosViewModel}}, Path=QuitarCommand}"
-                                            CommandParameter="{Binding .}" />
-
-                                    <!-- Agregar a una lista -->
-                                    <Button Grid.Column="3"
-                                            Text="+"
-                                            FontSize="22"
-                                            WidthRequest="40"
-                                            HeightRequest="40"
-                                            MinimumHeightRequest="40"
-                                            Padding="0"
-                                            CornerRadius="20"
-                                            VerticalOptions="Center"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FavoritosViewModel}}, Path=AgregarAListaCommand}"
-                                            CommandParameter="{Binding .}" />
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </RefreshView>
-
-            <!-- Sin favoritos -->
-            <VerticalStackLayout VerticalOptions="Center" Spacing="8" Margin="0,0,0,60" IsVisible="{Binding SinFavoritos}">
-                <Label Text="♡" FontSize="52" TextColor="{StaticResource AppSubtext}" HorizontalOptions="Center" />
-                <Label Text="Aún no tienes favoritos"
-                       FontSize="18"
+                <Label Grid.Column="1"
+                       Text="Mis Favoritos"
+                       TextColor="{StaticResource AppText}"
+                       FontSize="20"
                        FontAttributes="Bold"
-                       HorizontalOptions="Center" />
-                <Label Text="Toca el corazón de un producto para guardarlo aquí y volver a él cuando quieras."
-                       TextColor="{StaticResource AppSubtext}"
-                       HorizontalTextAlignment="Center"
-                       HorizontalOptions="Center" />
-                <Button Text="Buscar productos"
-                        Command="{Binding BuscarProductosCommand}"
-                        HorizontalOptions="Center"
-                        Margin="0,12,0,0" />
+                       VerticalOptions="Center"
+                       Margin="14,0,0,0" />
+
+                <!-- Resumen en Badge discreto -->
+                <Border Grid.Column="2"
+                        BackgroundColor="#1F2937"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="10,4"
+                        VerticalOptions="Center"
+                        IsVisible="{Binding HayFavoritos}">
+                    <Label Text="{Binding Resumen}"
+                           TextColor="{StaticResource AppYellow}"
+                           FontSize="12"
+                           FontAttributes="Bold"
+                           VerticalOptions="Center" />
+                </Border>
+            </Grid>
+
+            <!-- 1. AVISOS Y NOTIFICACIONES -->
+            <VerticalStackLayout Grid.Row="1" Spacing="8">
+                <!-- Mensaje de Error -->
+                <Border BackgroundColor="#260D12"
+                        Stroke="#EF4444"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="14,10"
+                        IsVisible="{Binding HasError}">
+                    <Label Text="{Binding MensajeError}" 
+                           TextColor="#EF4444" 
+                           FontSize="13" 
+                           LineBreakMode="WordWrap" />
+                </Border>
+
+                <!-- Mensaje de Éxito con opción Deshacer -->
+                <Border BackgroundColor="#0B2014"
+                        Stroke="#10B981"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="14,10"
+                        IsVisible="{Binding HasSuccess}">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" VerticalOptions="Center">
+                        <Label Text="{Binding MensajeExito}"
+                               TextColor="#10B981"
+                               FontSize="13"
+                               LineBreakMode="WordWrap"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="Deshacer"
+                               TextColor="{StaticResource AppYellow}"
+                               FontSize="13"
+                               FontAttributes="Bold"
+                               TextDecorations="Underline"
+                               VerticalOptions="Center"
+                               IsVisible="{Binding PuedeDeshacer}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding DeshacerCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+                </Border>
             </VerticalStackLayout>
+
+            <!-- 2. LISTA DE FAVORITOS -->
+            <Grid Grid.Row="2">
+
+                <RefreshView IsRefreshing="{Binding Cargando, Mode=TwoWay}"
+                             Command="{Binding CargarCommand}"
+                             RefreshColor="{StaticResource AppYellow}">
+                    <CollectionView ItemsSource="{Binding Favoritos}"
+                                    SelectionMode="None"
+                                    VerticalScrollBarVisibility="Never">
+                        <CollectionView.Footer>
+                            <BoxView HeightRequest="30" Color="Transparent" />
+                        </CollectionView.Footer>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:FavoritoItemViewModel">
+                                <Border Style="{StaticResource FavoritoCardStyle}">
+                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+
+                                        <!-- Inicial del producto en círculo amarillo -->
+                                        <Border WidthRequest="46"
+                                                HeightRequest="46"
+                                                StrokeShape="RoundRectangle 23"
+                                                StrokeThickness="0"
+                                                BackgroundColor="{StaticResource AppYellow}"
+                                                VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FavoritosViewModel}}, Path=AbrirDetalleCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="{Binding Inicial}"
+                                                   TextColor="{StaticResource Black}"
+                                                   FontSize="18"
+                                                   FontAttributes="Bold"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center" />
+                                        </Border>
+
+                                        <!-- Información del Producto -->
+                                        <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                            <VerticalStackLayout.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FavoritosViewModel}}, Path=AbrirDetalleCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                            </VerticalStackLayout.GestureRecognizers>
+                                            <Label Text="{Binding Nombre}"
+                                                   TextColor="{StaticResource AppText}"
+                                                   FontSize="15"
+                                                   FontAttributes="Bold"
+                                                   MaxLines="2"
+                                                   LineBreakMode="TailTruncation" />
+                                            <Label Text="{Binding Marca}"
+                                                   TextColor="{StaticResource Gray400}"
+                                                   FontSize="12" />
+                                            <Label Text="{Binding Agregado}"
+                                                   TextColor="{StaticResource Gray500}"
+                                                   FontSize="11"
+                                                   IsVisible="{Binding TieneFecha}" />
+                                        </VerticalStackLayout>
+
+                                        <!-- Botón Quitar de Favoritos (Abre el Modal de Confirmación) -->
+                                        <Border Grid.Column="2"
+                                                BackgroundColor="Transparent"
+                                                StrokeThickness="0"
+                                                WidthRequest="42"
+                                                HeightRequest="42"
+                                                VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer 
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FavoritosViewModel}}, Path=QuitarCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                            <Path Data="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                                                  Fill="#EF4444"
+                                                  Aspect="Uniform"
+                                                  WidthRequest="20"
+                                                  HeightRequest="20"
+                                                  HorizontalOptions="Center"
+                                                  VerticalOptions="Center" />
+                                        </Border>
+
+                                        <!-- Botón Agregar a una Lista -->
+                                        <Border Grid.Column="3"
+                                                BackgroundColor="#1F2937"
+                                                Stroke="{StaticResource Gray600}"
+                                                StrokeThickness="1"
+                                                WidthRequest="38"
+                                                HeightRequest="38"
+                                                StrokeShape="RoundRectangle 19"
+                                                VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer 
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:FavoritosViewModel}}, Path=AgregarAListaCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                            <Path Data="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                                                  Fill="{StaticResource AppYellow}"
+                                                  Aspect="Uniform"
+                                                  WidthRequest="16"
+                                                  HeightRequest="16"
+                                                  HorizontalOptions="Center"
+                                                  VerticalOptions="Center" />
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </RefreshView>
+
+                <!-- 3. ESTADO VACÍO (Icono de Corazón en Línea Fina Vectorial) -->
+                <VerticalStackLayout VerticalOptions="Center" 
+                                     Spacing="12" 
+                                     Margin="0,0,0,50" 
+                                     IsVisible="{Binding SinFavoritos}">
+                    <Border Stroke="{StaticResource Gray600}"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 40"
+                            HeightRequest="80"
+                            WidthRequest="80"
+                            BackgroundColor="#1A202C"
+                            HorizontalOptions="Center">
+                        <Path Data="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                              Stroke="{StaticResource Gray400}"
+                              StrokeThickness="1.5"
+                              Fill="Transparent"
+                              Aspect="Uniform"
+                              WidthRequest="32"
+                              HeightRequest="32"
+                              HorizontalOptions="Center"
+                              VerticalOptions="Center" />
+                    </Border>
+
+                    <Label Text="Aún no tienes favoritos"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource AppText}"
+                           HorizontalOptions="Center" />
+
+                    <Label Text="Guarda tus productos preferidos para acceder a ellos rápidamente y comparar sus precios."
+                           TextColor="{StaticResource Gray400}"
+                           FontSize="13"
+                           HorizontalTextAlignment="Center"
+                           HorizontalOptions="Center"
+                           MaximumWidthRequest="320" />
+
+                    <Button Text="Buscar Productos"
+                            Style="{StaticResource PrimaryActionYellowButtonStyle}"
+                            Command="{Binding BuscarProductosCommand}"
+                            HorizontalOptions="Center"
+                            Margin="0,10,0,0" />
+                </VerticalStackLayout>
+            </Grid>
         </Grid>
+
+        <!-- ========================================================================= -->
+        <!-- 2. MODAL PERSONALIZADO: CONFIRMAR QUITAR DE FAVORITOS (VECTORIAL)         -->
+        <!-- ========================================================================= -->
+        <Grid BackgroundColor="#D9000000"
+              IsVisible="{Binding MostrarModalQuitar}"
+              ZIndex="30">
+            <!-- Tocar el fondo oscuro cancela el modal -->
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CancelarModalQuitarCommand}" />
+            </Grid.GestureRecognizers>
+
+            <Border BackgroundColor="{StaticResource AppCard}"
+                    Stroke="#EF4444"
+                    StrokeThickness="1.5"
+                    StrokeShape="RoundRectangle 24"
+                    Padding="24"
+                    WidthRequest="360"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center">
+                <!-- Tocar dentro de la tarjeta no cancela -->
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+
+                <VerticalStackLayout Spacing="18" HorizontalOptions="Fill">
+                    <!-- Icono Vectorial Minimalista de Corazón en Rojo -->
+                    <Border BackgroundColor="#260D12"
+                            Stroke="#EF4444"
+                            StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 30"
+                            HeightRequest="60"
+                            WidthRequest="60"
+                            HorizontalOptions="Center">
+                        <Path Data="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                              Fill="#EF4444"
+                              Aspect="Uniform"
+                              WidthRequest="24"
+                              HeightRequest="24"
+                              HorizontalOptions="Center"
+                              VerticalOptions="Center" />
+                    </Border>
+
+                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                        <Label Text="¿Quitar de Favoritos?"
+                               FontSize="19"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource AppText}"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Este producto dejará de aparecer en tu lista de favoritos."
+                               FontSize="13"
+                               TextColor="{StaticResource Gray400}"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+
+                    <!-- Botones del Modal -->
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="12" Margin="0,8,0,0">
+                        <Button Grid.Column="0"
+                                Text="Cancelar"
+                                Style="{StaticResource CancelButtonStyle}"
+                                Command="{Binding CancelarModalQuitarCommand}" />
+
+                        <Button Grid.Column="1"
+                                Text="Sí, quitar"
+                                Style="{StaticResource ConfirmRedButtonStyle}"
+                                Command="{Binding ConfirmarQuitarCommand}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
     </Grid>
 </ContentPage>

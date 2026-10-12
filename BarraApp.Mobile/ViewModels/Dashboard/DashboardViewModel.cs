@@ -46,7 +46,6 @@ public partial class DashboardViewModel : ObservableObject
         _tokenStore = tokenStore;
     }
 
-    // Reemplaza el nombre de ejemplo por el del usuario autenticado.
     [RelayCommand]
     public async Task CargarNombreAsync()
     {
@@ -60,17 +59,13 @@ public partial class DashboardViewModel : ObservableObject
         }
         catch (Exception)
         {
-            // Si falla se deja el nombre por defecto; el mensaje de sesion expirada ya lo maneja AuthHeaderHandler.
-            // Se atrapa todo (no solo ApiException): este comando se lanza sin await desde OnAppearing y una
-            // excepcion sin atrapar cierra la app.
+            // Si falla se deja el nombre por defecto
         }
     }
 
     [RelayCommand]
     private async Task CambiarPestana(string pestana)
     {
-        // Listas y Gremios son pantallas propias (se abren encima, igual que Perfil); las demas
-        // pestañas siguen siendo contenido de esta misma pagina.
         if (pestana == "Listas")
         {
             await Shell.Current.GoToAsync(nameof(ListasPage));
@@ -146,15 +141,13 @@ public partial class DashboardViewModel : ObservableObject
 
             if (!confirmar) return;
 
-            // Antes solo navegaba al login: la sesion seguia viva en el servidor y el JWT guardado
-            // en el telefono. Ahora se cierra en el backend (revoca el JWT) y se borra el token local.
             try
             {
                 await _sesionService.LogoutAsync();
             }
             catch (ApiException)
             {
-                // Sin conexion o JWT ya vencido: igual se borra la sesion local.
+                // Sin conexión o JWT vencido
             }
 
             await _tokenStore.LimpiarTokenAsync();
@@ -214,8 +207,6 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task BuscarTextoAsync(string? texto)
     {
-        // Con texto abre la busqueda ya ejecutada; sin texto (o desde una busqueda reciente que solo
-        // tiene producto) abre el buscador vacio.
         string ruta = string.IsNullOrWhiteSpace(texto)
             ? nameof(BusquedaPage)
             : $"{nameof(BusquedaPage)}?texto={Uri.EscapeDataString(texto.Trim())}";

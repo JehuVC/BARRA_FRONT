@@ -21,7 +21,7 @@
                     <VerticalStackLayout Padding="20,20,20,40" Spacing="25">
 
                         <Grid ColumnDefinitions="Auto, *, Auto" VerticalOptions="Center">
-                            <!-- Botón Menú Hamburguesa conectado al ToggleMenuLateralCommand con área táctil cómoda -->
+                            <!-- Botón Menú Hamburguesa -->
                             <Border BackgroundColor="Transparent" StrokeThickness="0" Padding="10" VerticalOptions="Center">
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding ToggleMenuLateralCommand}"/>
@@ -44,15 +44,28 @@
                                 </Label.FormattedText>
                             </Label>
 
-                            <!-- Avatar superior derecho (navega al Perfil) -->
-                            <Border Grid.Column="2" Stroke="{StaticResource AppYellow}" StrokeThickness="2" StrokeShape="RoundRectangle 20" HeightRequest="40" WidthRequest="40" BackgroundColor="{StaticResource Gray600}">
+                            <!-- Avatar superior derecho -->
+                            <Border Grid.Column="2" 
+                                    Stroke="{StaticResource AppYellow}" 
+                                    StrokeThickness="1.5" 
+                                    StrokeShape="RoundRectangle 20" 
+                                    HeightRequest="40" 
+                                    WidthRequest="40" 
+                                    BackgroundColor="#1A202C">
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding OpcionMenuCommand}" CommandParameter="Perfil"/>
                                 </Border.GestureRecognizers>
-                                <Label Text="🧔🏻‍♂️" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Path Data="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                                      Fill="{StaticResource AppYellow}"
+                                      Aspect="Uniform"
+                                      WidthRequest="18"
+                                      HeightRequest="18"
+                                      HorizontalOptions="Center"
+                                      VerticalOptions="Center" />
                             </Border>
                         </Grid>
 
+                        <!-- Buscador -->
                         <Border Style="{StaticResource InputBorderStyle}" StrokeShape="RoundRectangle 16" HeightRequest="55" Padding="15,0">
                             <Grid ColumnDefinitions="Auto, *">
                                 <Path Data="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" Stroke="{StaticResource Gray500}" StrokeThickness="2" StrokeLineCap="Round" WidthRequest="20" HeightRequest="20" VerticalOptions="Center" Margin="0,0,10,0"/>
@@ -60,6 +73,7 @@
                             </Grid>
                         </Border>
 
+                        <!-- Banner Escanear Código -->
                         <Border BackgroundColor="{StaticResource AppYellow}" StrokeShape="RoundRectangle 32" HeightRequest="140" StrokeThickness="0" Margin="0,10,0,0">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding EscanearCommand}"/>
@@ -73,6 +87,7 @@
                             </VerticalStackLayout>
                         </Border>
 
+                        <!-- Búsquedas Recientes -->
                         <VerticalStackLayout Spacing="15" Margin="0,15,0,0">
                             <Label Text="BÚSQUEDAS RECIENTES" TextColor="{StaticResource Gray400}" FontSize="12" FontAttributes="Bold" />
                             <ActivityIndicator IsRunning="{Binding EstaCargando}" IsVisible="{Binding EstaCargando}" Color="{StaticResource AppYellow}" HorizontalOptions="Center" Margin="0,20"/>
@@ -279,54 +294,139 @@
                 StrokeThickness="0" IsVisible="{Binding MenuLateralVisible}">
             <VerticalStackLayout>
 
-                <!-- Cabecera del Menú (Perfil Rápido - Decorativo) -->
+                <!-- Cabecera del Menú con Avatar y Badge "PREMIUM" -->
                 <Grid ColumnDefinitions="Auto, *" Padding="20,40,20,20" BackgroundColor="{StaticResource AppCard}" Margin="0,0,0,10">
-                    <Border Stroke="{StaticResource AppYellow}" StrokeThickness="2" StrokeShape="RoundRectangle 25" HeightRequest="50" WidthRequest="50" BackgroundColor="{StaticResource Gray600}">
-                        <Label Text="🧔🏻‍♂️" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Border Stroke="{StaticResource AppYellow}" 
+                            StrokeThickness="1.5" 
+                            StrokeShape="RoundRectangle 25" 
+                            HeightRequest="50" 
+                            WidthRequest="50" 
+                            BackgroundColor="#1A202C">
+                        <Path Data="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                              Fill="{StaticResource AppYellow}"
+                              Aspect="Uniform"
+                              WidthRequest="22"
+                              HeightRequest="22"
+                              HorizontalOptions="Center"
+                              VerticalOptions="Center" />
                     </Border>
                     <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="15,0,0,0">
                         <Label Text="{Binding NombreUsuario}" FontAttributes="Bold" FontSize="18" TextColor="{StaticResource AppText}"/>
-                        <Border BackgroundColor="{StaticResource AppYellow}" StrokeShape="RoundRectangle 10" HorizontalOptions="Start" Padding="6,2" Margin="0,5,0,0">
-                            <Label Text="PREMIUM" TextColor="{StaticResource Black}" FontSize="10" FontAttributes="Bold"/>
+
+                        <!-- Badge Minimalista de PREMIUM -->
+                        <Border BackgroundColor="#221C0E" 
+                                Stroke="{StaticResource AppYellow}" 
+                                StrokeThickness="1" 
+                                StrokeShape="RoundRectangle 10" 
+                                HorizontalOptions="Start" 
+                                Padding="8,3" 
+                                Margin="0,5,0,0">
+                            <Label Text="PREMIUM" TextColor="{StaticResource AppYellow}" FontSize="10" FontAttributes="Bold"/>
                         </Border>
                     </VerticalStackLayout>
                 </Grid>
 
-                <!-- Opciones Secundarias -->
-                <VerticalStackLayout Spacing="5" Padding="10,0">
+                <!-- Opciones del Menú (Iconos Vectoriales Monocromáticos Limpios) -->
+                <VerticalStackLayout Spacing="4" Padding="12,0">
+
                     <!-- Mi Perfil -->
-                    <Button Text="👤  Mi Perfil"
-                            Command="{Binding OpcionMenuCommand}" CommandParameter="Perfil" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+                    <Border BackgroundColor="Transparent" StrokeThickness="0" Padding="12,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpcionMenuCommand}" CommandParameter="Perfil"/>
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="14" VerticalOptions="Center">
+                            <Path Data="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                                  Fill="{StaticResource Gray400}" Aspect="Uniform" WidthRequest="18" HeightRequest="18" VerticalOptions="Center"/>
+                            <Label Grid.Column="1" Text="Mi Perfil" TextColor="{StaticResource AppText}" FontSize="15" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
 
                     <!-- Mis Favoritos -->
-                    <Button Text="❤️  Mis Favoritos"
-                            Command="{Binding OpcionMenuCommand}" CommandParameter="Favoritos" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+                    <Border BackgroundColor="Transparent" StrokeThickness="0" Padding="12,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpcionMenuCommand}" CommandParameter="Favoritos"/>
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="14" VerticalOptions="Center">
+                            <Path Data="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                                  Fill="{StaticResource Gray400}" Aspect="Uniform" WidthRequest="18" HeightRequest="18" VerticalOptions="Center"/>
+                            <Label Grid.Column="1" Text="Mis Favoritos" TextColor="{StaticResource AppText}" FontSize="15" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
 
                     <!-- Historial Completo -->
-                    <Button Text="🕒  Historial Completo"
-                            Command="{Binding OpcionMenuCommand}" CommandParameter="Historial" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+                    <Border BackgroundColor="Transparent" StrokeThickness="0" Padding="12,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpcionMenuCommand}" CommandParameter="Historial"/>
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="14" VerticalOptions="Center">
+                            <Path Data="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"
+                                  Fill="{StaticResource Gray400}" Aspect="Uniform" WidthRequest="18" HeightRequest="18" VerticalOptions="Center"/>
+                            <Label Grid.Column="1" Text="Historial Completo" TextColor="{StaticResource AppText}" FontSize="15" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
 
-                    <!-- Comercios cercanos -->
-                    <Button Text="📍  Comercios cercanos"
-                            Command="{Binding OpcionMenuCommand}" CommandParameter="Comercios" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+                    <!-- Comercios Cercanos -->
+                    <Border BackgroundColor="Transparent" StrokeThickness="0" Padding="12,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpcionMenuCommand}" CommandParameter="Comercios"/>
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="14" VerticalOptions="Center">
+                            <Path Data="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                                  Fill="{StaticResource Gray400}" Aspect="Uniform" WidthRequest="18" HeightRequest="18" VerticalOptions="Center"/>
+                            <Label Grid.Column="1" Text="Comercios Cercanos" TextColor="{StaticResource AppText}" FontSize="15" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
 
-                    <!-- Registrar producto -->
-                    <Button Text="➕  Registrar producto"
-                            Command="{Binding OpcionMenuCommand}" CommandParameter="RegistrarProducto" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+                    <!-- Registrar Producto -->
+                    <Border BackgroundColor="Transparent" StrokeThickness="0" Padding="12,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpcionMenuCommand}" CommandParameter="RegistrarProducto"/>
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="14" VerticalOptions="Center">
+                            <Path Data="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                                  Fill="{StaticResource Gray400}" Aspect="Uniform" WidthRequest="18" HeightRequest="18" VerticalOptions="Center"/>
+                            <Label Grid.Column="1" Text="Registrar Producto" TextColor="{StaticResource AppText}" FontSize="15" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
 
                     <!-- Pagos / Suscripción -->
-                    <Button Text="💳  Suscripción / Pagos"
-                            Command="{Binding OpcionMenuCommand}" CommandParameter="Pagos" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+                    <Border BackgroundColor="Transparent" StrokeThickness="0" Padding="12,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpcionMenuCommand}" CommandParameter="Pagos"/>
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="14" VerticalOptions="Center">
+                            <Path Data="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"
+                                  Fill="{StaticResource Gray400}" Aspect="Uniform" WidthRequest="18" HeightRequest="18" VerticalOptions="Center"/>
+                            <Label Grid.Column="1" Text="Suscripción / Pagos" TextColor="{StaticResource AppText}" FontSize="15" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
 
-                    <BoxView HeightRequest="1" Color="{StaticResource AppBorder}" Margin="15,10"/>
+                    <BoxView HeightRequest="1" Color="{StaticResource AppBorder}" Margin="10,6"/>
 
                     <!-- Configuración -->
-                    <Button Text="⚙️  Configuración"
-                            Command="{Binding OpcionMenuCommand}" CommandParameter="Configuracion" BackgroundColor="Transparent" TextColor="{StaticResource AppText}" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+                    <Border BackgroundColor="Transparent" StrokeThickness="0" Padding="12,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpcionMenuCommand}" CommandParameter="Configuracion"/>
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="14" VerticalOptions="Center">
+                            <Path Data="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"
+                                  Fill="{StaticResource Gray400}" Aspect="Uniform" WidthRequest="18" HeightRequest="18" VerticalOptions="Center"/>
+                            <Label Grid.Column="1" Text="Configuración" TextColor="{StaticResource AppText}" FontSize="15" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
 
                     <!-- Cerrar Sesión -->
-                    <Button Text="🚪  Cerrar Sesión"
-                            Command="{Binding OpcionMenuCommand}" CommandParameter="CerrarSesion" BackgroundColor="Transparent" TextColor="#EF4444" HorizontalOptions="Start" Padding="15,12" FontSize="16"/>
+                    <Border BackgroundColor="Transparent" StrokeThickness="0" Padding="12,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpcionMenuCommand}" CommandParameter="CerrarSesion"/>
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto, *" ColumnSpacing="14" VerticalOptions="Center">
+                            <Path Data="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"
+                                  Fill="#EF4444" Aspect="Uniform" WidthRequest="18" HeightRequest="18" VerticalOptions="Center"/>
+                            <Label Grid.Column="1" Text="Cerrar Sesión" TextColor="#EF4444" FontAttributes="Bold" FontSize="15" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+
                 </VerticalStackLayout>
 
             </VerticalStackLayout>

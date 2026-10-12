@@ -22,6 +22,10 @@ public partial class PerfilViewModel(ISesionService sesionService, IAuthTokenSto
     [ObservableProperty] private string mensajeExito = string.Empty;
     [ObservableProperty] private bool estaOcupado;
 
+    // Control de visibilidad de los modales personalizados
+    [ObservableProperty] private bool mostrarModalGuardar;
+    [ObservableProperty] private bool mostrarModalLogout;
+
     private string _nombreOriginal = string.Empty;
     private string _zonaOriginal = string.Empty;
 
@@ -92,8 +96,9 @@ public partial class PerfilViewModel(ISesionService sesionService, IAuthTokenSto
         MensajeError = string.Empty;
     }
 
+    // Abre el modal personalizado para confirmar guardar
     [RelayCommand]
-    private async Task GuardarCambiosAsync()
+    private void SolicitarGuardarCambios()
     {
         if (EstaOcupado) return;
 
@@ -103,18 +108,20 @@ public partial class PerfilViewModel(ISesionService sesionService, IAuthTokenSto
             return;
         }
 
-        // 1. DIÁLOGO DE CONFIRMACIÓN (Sí / No)
-        bool deseaCambiar = await Shell.Current.DisplayAlert(
-            "Confirmar Actualización",
-            "¿Deseas guardar los cambios en tu perfil?",
-            "Sí, guardar",
-            "No, cancelar");
+        MostrarModalGuardar = true;
+    }
 
-        if (!deseaCambiar)
-        {
-            return;
-        }
+    [RelayCommand]
+    private void CancelarModalGuardar()
+    {
+        MostrarModalGuardar = false;
+    }
 
+    // Ejecuta el guardado tras confirmar en el modal
+    [RelayCommand]
+    private async Task ConfirmarGuardarCambiosAsync()
+    {
+        MostrarModalGuardar = false;
         EstaOcupado = true;
         MensajeError = string.Empty;
         MensajeExito = string.Empty;
@@ -157,20 +164,27 @@ public partial class PerfilViewModel(ISesionService sesionService, IAuthTokenSto
         MensajeError = string.Empty;
     }
 
+    // Abre el modal personalizado para confirmar cierre de sesión
     [RelayCommand]
-    private async Task CerrarSesionAsync()
+    private void SolicitarCerrarSesion()
     {
         if (EstaOcupado) return;
+        MostrarModalLogout = true;
+    }
 
-        bool confirmar = await Shell.Current.DisplayAlert(
-            "Cerrar Sesión",
-            "¿Estás seguro de que deseas salir?",
-            "Sí, salir",
-            "Cancelar");
+    [RelayCommand]
+    private void CancelarModalLogout()
+    {
+        MostrarModalLogout = false;
+    }
 
-        if (!confirmar) return;
-
+    // Ejecuta el cierre de sesión tras confirmar en el modal
+    [RelayCommand]
+    private async Task ConfirmarCerrarSesionAsync()
+    {
+        MostrarModalLogout = false;
         EstaOcupado = true;
+
         try
         {
             try
@@ -180,13 +194,6 @@ public partial class PerfilViewModel(ISesionService sesionService, IAuthTokenSto
             catch { }
 
             await tokenStore.GuardarTokenAsync(string.Empty);
-
-            // Notificación visual de despedida
-            await Shell.Current.DisplayAlert(
-                "👋 ¡Hasta pronto!",
-                "Tu sesión se ha cerrado correctamente.",
-                "Entendido");
-
             await Shell.Current.GoToAsync($"//{nameof(LoginPage)}");
         }
         finally

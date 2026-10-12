@@ -1,3 +1,4 @@
+using System;
 using BarraApp.Mobile.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FavoritoEntidad = Core.Entidades.Enti_Clases.Favorito;

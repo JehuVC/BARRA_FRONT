@@ -15,7 +15,8 @@ public partial class DashboardPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        // Ejecuta la llamada a la API cada vez que la pantalla aparece
+        // Asegura que el menú lateral esté cerrado al mostrar la página
+        _viewModel.MenuLateralVisible = false;
         _viewModel.CargarHistorialCommand.Execute(null);
         _viewModel.CargarNombreCommand.Execute(null);
     }

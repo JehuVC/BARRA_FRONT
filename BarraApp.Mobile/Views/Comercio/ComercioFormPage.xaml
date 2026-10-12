@@ -78,13 +78,16 @@
                            FontSize="12"
                            LineBreakMode="WordWrap" />
 
-                    <Button Text="📍 Usar mi ubicación actual"
+                    <!-- Botón limpio sin emoji -->
+                    <Button Text="Usar mi ubicación actual"
                             Command="{Binding UsarMiUbicacionCommand}"
                             IsEnabled="{Binding PuedeInteractuar}"
                             BackgroundColor="Transparent"
                             TextColor="{StaticResource AppYellow}"
                             BorderColor="{StaticResource AppYellow}"
-                            BorderWidth="1.5" />
+                            BorderWidth="1.5"
+                            HeightRequest="38"
+                            CornerRadius="10" />
 
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                         <controls:FloatingEntry Placeholder="Latitud"
@@ -98,13 +101,14 @@
                 </VerticalStackLayout>
             </Border>
 
+            <!-- Alerta más fina y estilizada -->
             <Border BackgroundColor="#2A1212"
                     Stroke="#EF4444"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 16"
-                    Padding="14"
+                    StrokeThickness="0.8"
+                    StrokeShape="RoundRectangle 12"
+                    Padding="12,10"
                     IsVisible="{Binding HasError}">
-                <Label Text="{Binding MensajeError}" TextColor="#EF4444" FontSize="13" LineBreakMode="WordWrap" />
+                <Label Text="{Binding MensajeError}" TextColor="#EF4444" FontSize="12" LineBreakMode="WordWrap" />
             </Border>
 
             <Button Text="{Binding TextoGuardar}"

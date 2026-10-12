@@ -1,4 +1,7 @@
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 using BarraApp.Mobile.Services.Api;
 using BarraApp.Mobile.Services.Favorito;
 using BarraApp.Mobile.Services.ListaCompra;
@@ -8,18 +11,21 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace BarraApp.Mobile.ViewModels.Favorito;
 
-// Lista de productos favoritos (api/favorito/obtener). Desde cada uno se puede quitar de favoritos
-// (api/favorito/quitar, con "Deshacer"), agregarlo a una lista de compra o abrir su detalle.
+// Lista de productos favoritos (api/favorito/obtener).
 public partial class FavoritosViewModel(IFavoritoService favoritoService, IAgregarAListaFlujo agregarAListaFlujo) : ObservableObject
 {
     private FavoritoItemViewModel? _ultimoQuitado;
 
-    // Enlazada al RefreshView: true mientras carga (primera carga y "jalar para recargar").
+    // Enlazada al RefreshView: true mientras carga
     [ObservableProperty] private bool cargando;
     [ObservableProperty] private bool cargaInicialTerminada;
     [ObservableProperty] private string mensajeError = string.Empty;
     [ObservableProperty] private string mensajeExito = string.Empty;
     [ObservableProperty] private bool puedeDeshacer;
+
+    // Control del Modal Personalizado de Confirmación
+    [ObservableProperty] private bool mostrarModalQuitar;
+    [ObservableProperty] private FavoritoItemViewModel? itemAQuitar;
 
     public ObservableCollection<FavoritoItemViewModel> Favoritos { get; } = new();
 
@@ -49,7 +55,7 @@ public partial class FavoritosViewModel(IFavoritoService favoritoService, IAgreg
                 return;
             }
 
-            // Los mas recientes primero.
+            // Los más recientes primero
             var ordenados = (res.favoritos ?? new())
                 .OrderByDescending(f => f.fechaAgregado ?? DateTime.MinValue)
                 .Select(f => new FavoritoItemViewModel(f));
@@ -73,9 +79,30 @@ public partial class FavoritosViewModel(IFavoritoService favoritoService, IAgreg
         }
     }
 
+    // 1. Abre el modal personalizado de confirmación
     [RelayCommand]
-    private async Task QuitarAsync(FavoritoItemViewModel item)
+    private void Quitar(FavoritoItemViewModel item)
     {
+        if (item is null || item.Procesando) return;
+        ItemAQuitar = item;
+        MostrarModalQuitar = true;
+    }
+
+    [RelayCommand]
+    private void CancelarModalQuitar()
+    {
+        MostrarModalQuitar = false;
+        ItemAQuitar = null;
+    }
+
+    // 2. Ejecuta la eliminación tras confirmar en el modal
+    [RelayCommand]
+    private async Task ConfirmarQuitarAsync()
+    {
+        var item = ItemAQuitar;
+        MostrarModalQuitar = false;
+        ItemAQuitar = null;
+
         if (item is null || item.Procesando) return;
 
         item.Procesando = true;
@@ -103,7 +130,7 @@ public partial class FavoritosViewModel(IFavoritoService favoritoService, IAgreg
         }
     }
 
-    // Vuelve a marcar como favorito el ultimo producto quitado y recarga la lista.
+    // Vuelve a marcar como favorito el último producto quitado y recarga la lista
     [RelayCommand]
     private async Task DeshacerAsync()
     {
@@ -187,7 +214,7 @@ public partial class FavoritosViewModel(IFavoritoService favoritoService, IAgreg
         OnPropertyChanged(nameof(Resumen));
     }
 
-    // Aviso con boton "Deshacer" que se oculta solo a los 6 segundos.
+    // Aviso con botón "Deshacer" que se oculta solo a los 6 segundos
     private async void MostrarConDeshacer(FavoritoItemViewModel item)
     {
         _ultimoQuitado = item;
@@ -203,7 +230,7 @@ public partial class FavoritosViewModel(IFavoritoService favoritoService, IAgreg
         }
     }
 
-    // Aviso breve que se oculta solo.
+    // Aviso breve que se oculta solo
     private async void MostrarExito(string mensaje)
     {
         MensajeExito = mensaje;
